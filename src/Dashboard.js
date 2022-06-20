@@ -1,20 +1,25 @@
 import ThemeProvider from 'react-bootstrap/ThemeProvider'
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+
 function Dashboard(){
     // let navigate = useNavigate();
     const username = useState(localStorage.getItem('username'))
+    let navigate = useNavigate();
+    useEffect(()=>{
+        if(localStorage.getItem('token')==="null" || localStorage.getItem('token')==="" || localStorage.getItem('token')===null){
+             navigate('/login')
+        }
+        
+    }, []);
     const logout = ()=>{
         window.localStorage.setItem('token', null);
         window.localStorage.setItem('username', null);
-        window.location.replace('/login')
+        navigate('/login')
     } 
 
-    if(window.localStorage.getItem('token')==='null'|| window.localStorage.getItem('token')==='' || window.localStorage.getItem('token')===null){
-        window.location.replace('/login')
-    }
-
-    else{
+  
         return (
             <ThemeProvider breakpoints={['xxxl', 'xxl', 'xl', 'lg', 'md', 'sm', 'xs', 'xxs']}>
                 <Container className='main-con'>
@@ -34,7 +39,7 @@ function Dashboard(){
                 </Container>
             </ThemeProvider>
         )
-    }
+    
 }
 
 export default Dashboard;

@@ -3,15 +3,23 @@ import ThemeProvider from 'react-bootstrap/ThemeProvider'
 import { Container, Row, Col, Card, Button, Form, InputGroup, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import gifBg from './login-bg.gif';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 
-function Login(){
 
-    
+function Login(){
+   
+
     let navigate = useNavigate();
-    const [login, setLogin] = useState(false);
+    
+    useEffect(() =>{
+        if(!(localStorage.getItem('token')==="null" || localStorage.getItem('token')==="" || localStorage.getItem('token')===null)){
+         navigate('/dashboard')
+        }
+        
+    }, [])
+    
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [show, setShow] = useState(false);
@@ -27,7 +35,6 @@ function Login(){
                 username: username,
                 password: password
             },
-
             headers: {
                 "Content-Type": "multipart/form-data"
             }
@@ -36,29 +43,20 @@ function Login(){
             let response = res.data 
             console.log(JSON.stringify(response))
             if(response.status){
-                setLogin(true);
                 localStorage.setItem('token', response.token)
                 localStorage.setItem('username',username)
-                navigate('/dashboard') 
+            
+                navigate('/dashboard')
             }
             else{
                 //Validation
                 setShow(true);
-                alert(show)
+                
             }
         })
     }
    
 
-    if(!(window.localStorage.getItem('token')==='null'|| window.localStorage.getItem('token')==='' || window.localStorage.getItem('token')===null)){
-        window.location.replace('/dashboard') 
-    }
-
-    
-       
-    
-
-   else{
     return(
         <ThemeProvider breakpoints={['xxxl', 'xxl', 'xl', 'lg', 'md', 'sm', 'xs', 'xxs']}>
             <Container className='main-con'>
@@ -69,7 +67,7 @@ function Login(){
                                 <Form noValidate  className="userform" onSubmit={hundleLogin}>
                                    <Row className='d-flex justify-content-center'>
                                      <Col xxl={7}>
-                                     <Row className="mb-3">
+                                     <Row className="mb-3 ms-2">
                                         <Col>
                                         <Alert variant="danger" show={show} onClose={() => setShow(false)} dismissible>
                                             <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
@@ -80,7 +78,7 @@ function Login(){
                                         <Card.Title className='mt-5 mb-5'> <h3>User Login</h3> </Card.Title>
                                         </Col>
                                         <Form.Group as={Col} md="12" controlId="validationCustomUsername">
-                                            <Form.Label className="float-start mb-0">Username</Form.Label>
+                                            {/* <Form.Label className="float-start mb-0">Username</Form.Label> */}
                                             <InputGroup hasValidation >
                                                 <Form.Control
                                                 className='input-round mb-3'
@@ -99,7 +97,7 @@ function Login(){
     
                                     
                                         <Form.Group as={Col} md="12" controlId="validationEmail">
-                                            <Form.Label className="float-start mb-0">Password</Form.Label>
+                                            {/* <Form.Label className="float-start mb-0">Password</Form.Label> */}
                                             <Form.Control
                                                 className='input-round'
                                                 size='lg'
@@ -113,12 +111,11 @@ function Login(){
                                                 Input Password!!!
                                             </Form.Control.Feedback>
                                         </Form.Group>
-    
-                                        
+                                        <div className="d-grid gap-2 mt-4">
+                                          <Button type="submit" className='btn-lg'>Login</Button>
+                                        </div> 
                                     </Row>
-                                    <div className="d-grid gap-2">
-                                        <Button type="submit" className='btn-lg'>Login</Button>
-                                    </div>
+                                    
                                      </Col>
                                      <Col xxl={5} >
                                         <img src={gifBg} alt="" className='img-fluid'/>
@@ -134,7 +131,7 @@ function Login(){
             </Container>
         </ThemeProvider>
         )
-    }
+    
 }
 
 
