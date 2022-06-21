@@ -15,7 +15,7 @@ function Login(){
     
     useEffect(() =>{
         if(!(localStorage.getItem('token')==="null" || localStorage.getItem('token')==="" || localStorage.getItem('token')===null)){
-         navigate('/dashboard')
+         navigate('/crud')
         }
         
     }, [])
@@ -46,7 +46,7 @@ function Login(){
                 localStorage.setItem('token', response.token)
                 localStorage.setItem('username',username)
             
-                navigate('/dashboard')
+                navigate('/crud')
             }
             else{
                 //Validation
@@ -72,7 +72,7 @@ function Login(){
                                         <Alert variant="danger" show={show} onClose={() => setShow(false)} dismissible>
                                             <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
                                             <p>
-                                                In Valid User Credentials!!
+                                                In Valid User Credentials!!!!!!!!!!!!!
                                             </p>
                                         </Alert>
                                         <Card.Title className='mt-5 mb-5'> <h3>User Login</h3> </Card.Title>

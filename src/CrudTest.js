@@ -1,4 +1,3 @@
-
 // import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faPenToSquare} from '@fortawesome/free-solid-svg-icons'
@@ -9,174 +8,139 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 
-//get users form local storage
-const getUsersLS= ()=>{
-    const userData = localStorage.getItem('Users');
-    if (userData){
-        return JSON.parse(userData)
-    }
-    else{
-       return []; 
-    }
-}
-
-
-function Crud(){
-
-    let navigate = useNavigate();
-    
-    useEffect(() =>{
-        if(localStorage.getItem('token')==="null" || localStorage.getItem('token')==="" || localStorage.getItem('token')===null){
-         navigate('/login')
-        }
-        
-    }, [])
-
- //validation state
- const [validated, setValidated] = useState(false);
- //users-data array
- const [users, setUsers]=useState(getUsersLS());
-
- //user-data states
- const [id, setId] = useState('')
- const [firstname, setFirstName] = useState('');
- const [lastname, setLastName] = useState('');
- const [middleinitial, setMiddleInitial] = useState('');
- const [username, setUserName] = useState('');
- const [email, setEmail] = useState('');
- const [contact, setContact] = useState('');
- const [password, setPassword] = useState('');
-
+export class CrudTest extends React.Component {
  
-//Event
- const handleUserSubmit = (e) => {
-   let token = localStorage.getItem('token') 
-   const form = e.currentTarget; 
-   e.preventDefault();
-   if (form.checkValidity() === false) {
-     e.preventDefault();
-     e.stopPropagation();
+ //Updating user
+//  setUsers([...users, user]); oo
+    constructor() {
+      super();
+      this.state = {
+        isUpdate      : false,
+        validated     : false,
+        users         : [],
+        id            : '',
+        firstname     : '',
+        lastname      : '',
+        middleinitial : '',
+        username      : '',
+        email         : '',
+        contact       : '',
+        password      : '',
+      };
+
+    }
+
+    //user update in local storage
+    userUpdate(user, index){
+      // setForm(true)
+      // setId(index);
+      // setFirstName(user.firstname);
+      // setMiddleInitial(user.middleinitial)
+      // setLastName(user.lastname);
+      // setUserName(user.username);
+      // setEmail(user.email);
+      // setContact(user.contact);
+      // setPassword(user.password);
+      this.setState({
+        isUpdate      : false,
+        id            : index,
+        firstname     : user.firstname,
+        lastname      : user.lastname,
+        middleinitial : user.middlename,
+        username      : user.username,
+        email         : user.email,
+        contact       : user.contact,
+        password      : user.password
+      })
+    }
+    // delete
+    userDelete(id){
+      alert('Are you sure you want to delete?')
+     const del = this.state.users.filter((user)=>{
+      return user.id !== id;
+     })
+     this.setState({
+       users: del
+     })
+     
    }
 
-
-   else if(form.checkValidity() === true){
-     //Create user
-     let user = {
-        id: id,
-        fname: firstname,
-        lname: lastname,
-        username: username,
-        mname: middleinitial,
-        email:email,
-        contact:contact,
-        password: password    
+   //User Submit Create
+   handleUserSubmit = (e) =>{
+    let token = localStorage.getItem('token') 
+    const form = e.currentTarget; 
+    e.preventDefault();
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
     }
-    
-    //Updating user 
-    setUsers([...users, user])
-    
-    axios({
-        method: 'POST',
-        url:'https://marketplace2.unified.ph/admin-register',
-        data: user,
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": 'Bearer ' + token,
-    
-        }
-    })
-    .then(res => {
-        let response = res.data 
-        console.log(JSON.stringify(response))
-        if(response.status){
-           
+ 
+ 
+    else if(form.checkValidity() === true){
+      //Create user
+      let user = {
+         id         : this.state.id,
+         fname      : this.state.firstname,
+         lname      : this.state.lastname,
+         username   : this.state.username,
+         mname      : this.state.middleinitial,
+         email      : this.state.email,
+         contact    : this.state.contact,
+         password   : this.state.password    
+     }
+     
+    //  //Updating user 
+    //  setUsers([...users, user])
+     
+     axios({
+         method: 'POST',
+         url:'https://marketplace2.unified.ph/admin-register',
+         data: user,
+         headers: {
+             "Content-Type": "application/json",
+             "Authorization": 'Bearer ' + token,
+     
+         }
+     })
+     .then(res => {
+         let response = res.data 
+         console.log(JSON.stringify(response))
+         if(response.status){
             
-        }
-        else{
-            //Validation
-            
-            
-        }
-    })
+             
+         }
+         else{
+             //Validation
+             
+             
+         }
+     })
+         
         
        
-      
- 
-   }
-   
-   
-   setValidated(true);
-   
-   
- };
- 
-
- //saving users to local storage
- useEffect(()=>{
-   localStorage.setItem('Users', JSON.stringify(users))
- }, [users]
- )
-
- //user delete in local storage
- const userDelete = (id)=>{
-    alert('Are you sure you want to delete?')
-   const del = users.filter((user)=>{
-    return user.id !== id;
-   })
-   setUsers(del);
- }
-
-  //form state
-  const [form,setForm] = useState(false);
-
-  //user update in local storage
-  const userUpdate = (user, index)=>{
-     setForm(true)
-     setId(index);
-     setFirstName(user.firstname);
-     setMiddleInitial(user.middleinitial)
-     setLastName(user.lastname);
-     setUserName(user.username);
-     setEmail(user.email);
-     setContact(user.contact);
-     setPassword(user.password);
-  }
-
-  const handleUserUpdate=(e)=>{
-   const form2 = e.currentTarget;
-   if (form2.checkValidity() === false) {
-     e.preventDefault();
-     e.stopPropagation();
-   }
-
-   else if(form2.checkValidity() === true){
-    e.preventDefault();
-    let items = [...users];
-    let item = items[id];
-    item.firstname = firstname;
-    item.lastname = lastname;
-    item.middleinitial = middleinitial;
-    item.username = username;
-    item.email = email;
-    item.contact = contact;
-    item.password = password;
-     setId('');
-     setFirstName('');
-     setMiddleInitial('');
-     setLastName('');
-     setUserName('');
-     setEmail('');
-     setContact('');
-     setPassword('');
-    setForm(false)
-    alert('User Updated Successfully')
-   }
-
-   setValidated(true)
+  
+    }
     
-  }
+    
+    this.setState({validated: true})
+  
+    
+  };
 
-    return(
+  handleChange(key,value){
+    let data = {}
+    data[key] = value;
+    this.setState(data);
+  }
+  
+    componentDidMount() {
+    }
+  
+    componentWillUnmount() {
+    }
+  
+    render() {
+      return (
         <div className='data-app'>
             <ThemeProvider breakpoints={['xxxl', 'xxl', 'xl', 'lg', 'md', 'sm', 'xs', 'xxs']}>
                 <Container className='main-con'>
@@ -201,9 +165,9 @@ function Crud(){
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                               {users.length>0&&(
+                                               {this.state.users.length>0&&(
                                                 <>
-                                                {users.map((user,index)=>(
+                                                {this.state.users.map((user,index)=>(
                                                     <tr key={user.id}>
                                                      <td className="text-start">{user.id}</td>
                                                      <td className="text-start">{user.firstname}</td>
@@ -212,13 +176,13 @@ function Crud(){
                                                      <td className="text-start">{user.username}</td>
                                                      <td className="text-start">{user.email}</td>
                                                      <td className="text-start">{user.contact}</td>
-                                                     {form===false&&(
+                                                     {this.state.isUpdate===false&&(
                                                         <>
-                                                            <td><Button variant="outline-primary" onClick={()=>userUpdate(user,index)}>Edit</Button>{' '}</td>
-                                                            <td><Button variant="outline-danger" onClick={()=>userDelete(user.id)}>Delete</Button>{' '}</td>
+                                                            <td><Button variant="outline-primary" onClick={()=>this.userUpdate(user,index)}>Edit</Button>{' '}</td>
+                                                            <td><Button variant="outline-danger" onClick={()=>this.userDelete(user.id)}>Delete</Button>{' '}</td>
                                                         </>
                                                      )}
-                                                     {form===true&&(
+                                                     {this.state.isUpdate===true&&(
                                                         <>
                                                             <td><Button variant="primary" disabled>Edit</Button>{' '}</td>
                                                             <td><Button variant="danger" disabled>Delete</Button>{' '}</td>
@@ -234,12 +198,12 @@ function Crud(){
                                     </Card>
                                 </Col>
                                 {/* CREATE FORM */}
-                                {form===false&&(
+                                {this.state.isUpdate===false&&(
                                    <Col xl={4}>
                                         <Card className="card-round">
                                             <Card.Body>
                                                 <h3><FontAwesomeIcon icon={faUser} className="me-2"/> Add Users</h3>
-                                                <Form noValidate validated={validated} onSubmit={handleUserSubmit} className="userform">
+                                                <Form noValidate validated={this.state.validated} onSubmit={this.handleUserSubmit} className="userform">
                                                     <Row className="mb-3">
                                                         <Form.Group as={Col} md="6" controlId="validationCustom01">
                                                             <Form.Label className="float-start mb-0">First name</Form.Label>
@@ -247,7 +211,7 @@ function Crud(){
                                                                 required
                                                                 type="text"
                                                                 placeholder="First name"
-                                                                onChange={(e)=>setFirstName(e.target.value)} value={firstname}
+                                                                onChange={(e)=>this.handleChange('firstname',e.target.value)} value={this.state.firstname}
                                                             />
                                                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                         </Form.Group>
@@ -258,7 +222,7 @@ function Crud(){
                                                                 required
                                                                 type="text"
                                                                 placeholder="Middle Initial"
-                                                                onChange={(e)=>setMiddleInitial(e.target.value)} value={middleinitial}
+                                                                onChange={(e)=>this.handleChange('middleinitial',e.target.value)} value={this.state.middleinitial}
                                                             />
                                                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                         </Form.Group>
@@ -269,7 +233,7 @@ function Crud(){
                                                                 required
                                                                 type="text"
                                                                 placeholder="Last name"
-                                                                onChange={(e)=>setLastName(e.target.value)} value={lastname}
+                                                                onChange={(e)=>this.handleChange('lastname',e.target.value)} value={this.state.lastname}
                                                             />
                                                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                         </Form.Group>
@@ -282,7 +246,7 @@ function Crud(){
                                                                 placeholder="Username"
                                                                 aria-describedby="inputGroupPrepend"
                                                                 required
-                                                                onChange={(e)=>setUserName(e.target.value)} value={username}
+                                                                onChange={(e)=>this.handleChange('username',e.target.value)} value={this.state.username}
                                                                 />
                                                                 <Form.Control.Feedback type="invalid">
                                                                 Please choose a username.
@@ -296,7 +260,7 @@ function Crud(){
                                                                 required
                                                                 type="email"
                                                                 placeholder="Email"
-                                                                onChange={(e)=>setEmail(e.target.value)} value={email}
+                                                                onChange={(e)=>this.handleChange('email',e.target.value)} value={this.state.email}
                                                             />
                                                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                             <Form.Control.Feedback type="invalid">
@@ -310,7 +274,7 @@ function Crud(){
                                                                 required
                                                                 type="password"
                                                                 placeholder="Input Password"
-                                                                onChange={(e)=>setPassword(e.target.value)} value={password}
+                                                                onChange={(e)=>this.handleChange('password',e.target.value)} value={this.state.password}
                                                             />
                                                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                             <Form.Control.Feedback type="invalid">
@@ -324,7 +288,7 @@ function Crud(){
                                                                 required
                                                                 type="text"
                                                                 placeholder="Create Your ID"
-                                                                onChange={(e)=>setId(e.target.value)} value={id}
+                                                                onChange={(e)=>this.handleChange('id',e.target.value)} value={this.state.id}
                                                             />
                                                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                             <Form.Control.Feedback type="invalid">
@@ -338,7 +302,7 @@ function Crud(){
                                                                 required
                                                                 type="number"
                                                                 placeholder="contact"
-                                                                onChange={(e)=>setContact(e.target.value)} value={contact}
+                                                                onChange={(e)=>this.handleChange('contact',e.target.value)} value={this.state.contact}
                                                             />
                                                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                             <Form.Control.Feedback type="invalid">
@@ -355,12 +319,12 @@ function Crud(){
                                    </Col>
                                 )}
                                {/* UPDATE FORM */}
-                               {form===true&&(
+                               {this.state.isUpdate===true&&(
                                    <Col xl={4}>
                                         <Card className="card-round">
                                             <Card.Body>
                                                 <h3><FontAwesomeIcon icon={faUser} className="me-2"/> Update Users</h3>
-                                                <Form noValidate validated={validated} onSubmit={handleUserUpdate} className="userform">
+                                                <Form noValidate validated={this.state.validated} onSubmit={this.handleUserUpdate} className="userform">
                                                 <Row className="mb-3">
                                                     <Form.Group as={Col} md="6" controlId="validationCustom01">
                                                         <Form.Label className="float-start mb-0">First name</Form.Label>
@@ -368,7 +332,7 @@ function Crud(){
                                                             required
                                                             type="text"
                                                             placeholder="First name"
-                                                            onChange={(e)=>setFirstName(e.target.value)} value={firstname}
+                                                            onChange={(e)=>this.handleChange('firstname',e.target.value)} value={this.state.firstname}
                                                         />
                                                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                     </Form.Group>
@@ -379,7 +343,7 @@ function Crud(){
                                                             required
                                                             type="text"
                                                             placeholder="Middle Initial"
-                                                            onChange={(e)=>setMiddleInitial(e.target.value)} value={middleinitial}
+                                                            onChange={(e)=>this.handleChange('middleinitial',e.target.value)} value={this.state.middleinitial}
                                                         />
                                                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                     </Form.Group>
@@ -390,7 +354,7 @@ function Crud(){
                                                             required
                                                             type="text"
                                                             placeholder="Last name"
-                                                            onChange={(e)=>setLastName(e.target.value)} value={lastname}
+                                                            onChange={(e)=>this.handleChange('lastname',e.target.value)} value={this.state.lastname}
                                                         />
                                                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                     </Form.Group>
@@ -403,7 +367,7 @@ function Crud(){
                                                             placeholder="Username"
                                                             aria-describedby="inputGroupPrepend"
                                                             required
-                                                            onChange={(e)=>setUserName(e.target.value)} value={username}
+                                                            onChange={(e)=>this.handleChange('username',e.target.value)} value={this.state.username}
                                                             />
                                                             <Form.Control.Feedback type="invalid">
                                                             Please choose a username.
@@ -417,7 +381,7 @@ function Crud(){
                                                             required
                                                             type="email"
                                                             placeholder="Email"
-                                                            onChange={(e)=>setEmail(e.target.value)} value={email}
+                                                            onChange={(e)=>this.handleChange('email',e.target.value)} value={this.state.email}
                                                         />
                                                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                         <Form.Control.Feedback type="invalid">
@@ -431,7 +395,7 @@ function Crud(){
                                                             required
                                                             type="password"
                                                             placeholder="Input Password"
-                                                            onChange={(e)=>setPassword(e.target.value)} value={password}
+                                                            onChange={(e)=>this.handleChange('password',e.target.value)} value={this.state.password}
                                                         />
                                                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                         <Form.Control.Feedback type="invalid">
@@ -445,7 +409,7 @@ function Crud(){
                                                             required
                                                             type="text"
                                                             placeholder="Create Your ID"
-                                                            onChange={(e)=>setId(e.target.value)} value={id}
+                                                            onChange={(e)=>this.handleChange('id',e.target.value)} value={this.state.id}
                                                         />
                                                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                         <Form.Control.Feedback type="invalid">
@@ -459,7 +423,7 @@ function Crud(){
                                                             required
                                                             type="number"
                                                             placeholder="contact"
-                                                            onChange={(e)=>setContact(e.target.value)} value={contact}
+                                                            onChange={(e)=>this.handleChange('contact',e.target.value)} value={this.state.contact}
                                                         />
                                                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                         <Form.Control.Feedback type="invalid">
@@ -481,12 +445,7 @@ function Crud(){
                 </Container>
             </ThemeProvider>
         </div>
-    )
+      );
+  }
 }
 
-
-
-
-
-
-export default Crud;
