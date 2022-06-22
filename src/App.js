@@ -4,12 +4,13 @@ import './App.css';
 import Login from './Login';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import { CrudTest } from './CrudTest';
+import React, { useEffect, useState } from 'react';
 
 import Dashboard from './Dashboard';
 
-function App() {
- 
-  return (
+export class App extends React.Component{
+  render(){
+    return (
       <div className="App">
         <div className="custom-shape-divider-top-1655087412">
           <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
@@ -27,7 +28,8 @@ function App() {
           </Routes>
         </Router>
       </div>
-  );
+    );
+  }
 }
 
-export default App;
+// export default App;

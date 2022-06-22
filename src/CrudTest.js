@@ -6,7 +6,7 @@ import { Container, Row, Col, Card, Table, Button, Form, InputGroup } from 'reac
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import API from "./api/API";
 
 export class CrudTest extends React.Component {
  
@@ -27,7 +27,7 @@ export class CrudTest extends React.Component {
         contact       : '',
         password      : '',
       };
-
+      this.token=localStorage.getItem('token')
     }
 
     //user update in local storage
@@ -78,7 +78,7 @@ export class CrudTest extends React.Component {
  
     else if(form.checkValidity() === true){
       //Create user
-      let user = {
+      let postData = {
          id         : this.state.id,
          fname      : this.state.firstname,
          lname      : this.state.lastname,
@@ -92,32 +92,42 @@ export class CrudTest extends React.Component {
     //  //Updating user 
     //  setUsers([...users, user])
      
-     axios({
-         method: 'POST',
-         url:'https://marketplace2.unified.ph/admin-register',
-         data: user,
-         headers: {
-             "Content-Type": "application/json",
-             "Authorization": 'Bearer ' + token,
+    //  axios({
+    //      method: 'POST',
+    //      url:process.env.BASE_URL + '/admin-register',
+    //      data: user,
+    //      headers: {
+    //          "Content-Type": "application/json",
+    //          "Authorization": 'Bearer ' + token,
      
-         }
-     })
-     .then(res => {
-         let response = res.data 
-         console.log(JSON.stringify(response))
-         if(response.status){
+    //      }
+    //  })
+    //  .then(res => {
+    //      let response = res.data 
+    //      console.log(JSON.stringify(response))
+    //      if(response.status){
             
              
-         }
-         else{
-             //Validation
+    //      }
+    //      else{
+    //          //Validation
              
              
-         }
-     })
-         
-        
-       
+    //      }
+    //  })
+        API.User.create(postData,token) 
+        .then(res => {
+            let response = res.data
+            console.log(JSON.stringify(response))
+            if (response.status) {
+
+
+            } else {
+                //Validation
+
+
+            }
+        });
   
     }
     
@@ -127,17 +137,26 @@ export class CrudTest extends React.Component {
     
   };
 
-  handleChange(key,value){
-    let data = {}
-    data[key] = value;
-    this.setState(data);
-  }
+    handleChange(key,value){
+        let data = {}
+        data[key] = value;
+        this.setState(data);
+    } 
   
+
     componentDidMount() {
+        console.log('mounted')
+        API.User.getAll(this.token)
+        .then(res => {
+        this.setState({
+            users: res?.data
+        })
+        
+        console.log("data",res?.data)
+        console.log("users state", this.state.users)
+        })
     }
-  
-    componentWillUnmount() {
-    }
+   
   
     render() {
       return (
@@ -254,7 +273,7 @@ export class CrudTest extends React.Component {
                                                             </InputGroup>
                                                         </Form.Group>
 
-                                                        <Form.Group as={Col} md="6" controlId="validationEmail">
+                                                        <Form.Group as={Col} md="6" controlId="validationEmail5">
                                                             <Form.Label className="float-start mb-0">Email</Form.Label>
                                                             <Form.Control
                                                                 required
@@ -268,7 +287,7 @@ export class CrudTest extends React.Component {
                                                             </Form.Control.Feedback>
                                                         </Form.Group>
 
-                                                        <Form.Group as={Col} md="12" controlId="validationEmail">
+                                                        <Form.Group as={Col} md="12" controlId="validationEmail6">
                                                             <Form.Label className="float-start mb-0">Password</Form.Label>
                                                             <Form.Control
                                                                 required
@@ -282,7 +301,7 @@ export class CrudTest extends React.Component {
                                                             </Form.Control.Feedback>
                                                         </Form.Group>
 
-                                                        <Form.Group as={Col} md="6" controlId="validationEmail">
+                                                        <Form.Group as={Col} md="6" controlId="validationEmail7">
                                                             <Form.Label className="float-start mb-0 mt-1">ID</Form.Label>
                                                             <Form.Control
                                                                 required
@@ -296,7 +315,7 @@ export class CrudTest extends React.Component {
                                                             </Form.Control.Feedback>
                                                         </Form.Group>
 
-                                                        <Form.Group as={Col} md="6" controlId="validationEmail">
+                                                        <Form.Group as={Col} md="6" controlId="validationEmail8">
                                                             <Form.Label className="float-start mb-0 mt-1">Contact #</Form.Label>
                                                             <Form.Control
                                                                 required
@@ -348,7 +367,7 @@ export class CrudTest extends React.Component {
                                                         <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                     </Form.Group>
 
-                                                    <Form.Group as={Col} md="12" controlId="validationCustom02">
+                                                    <Form.Group as={Col} md="12" controlId="validationCustom03">
                                                         <Form.Label className="float-start mb-0">Last name</Form.Label>
                                                         <Form.Control
                                                             required
@@ -389,7 +408,7 @@ export class CrudTest extends React.Component {
                                                         </Form.Control.Feedback>
                                                     </Form.Group>
 
-                                                    <Form.Group as={Col} md="12" controlId="validationEmail">
+                                                    <Form.Group as={Col} md="12" controlId="validationPassword">
                                                         <Form.Label className="float-start mb-0">Password</Form.Label>
                                                         <Form.Control
                                                             required
@@ -403,7 +422,7 @@ export class CrudTest extends React.Component {
                                                         </Form.Control.Feedback>
                                                     </Form.Group>
 
-                                                    <Form.Group as={Col} md="6" controlId="validationEmail">
+                                                    <Form.Group as={Col} md="6" controlId="validationID">
                                                         <Form.Label className="float-start mb-0 mt-1">ID</Form.Label>
                                                         <Form.Control
                                                             required
@@ -417,7 +436,7 @@ export class CrudTest extends React.Component {
                                                         </Form.Control.Feedback>
                                                     </Form.Group>
 
-                                                    <Form.Group as={Col} md="6" controlId="validationEmail">
+                                                    <Form.Group as={Col} md="6" controlId="validationContact">
                                                         <Form.Label className="float-start mb-0 mt-1">Contact #</Form.Label>
                                                         <Form.Control
                                                             required
@@ -447,5 +466,7 @@ export class CrudTest extends React.Component {
         </div>
       );
   }
+
+ 
 }
 
