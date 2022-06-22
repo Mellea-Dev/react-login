@@ -19,9 +19,12 @@ export default {
     getAll(token) {
         return axios({
                 method: 'GET',
-                url: process.env.REACT_APP_BASE_URL + '/admin-list',
+                url: process.env.REACT_APP_BASE_URL + '/employees' ,
                 headers: {
                     "Authorization": 'Bearer ' + token,
+                },
+                params: {
+                    "token": token,
                 }
             })
             
@@ -40,4 +43,11 @@ export default {
             }
       })
     }
+
+    // update(postData,token){
+    //     return axios({
+    //         method: 'POST',
+    //         url: process.env.REACT_APP_BASE_URL + '/login',
+    //     })
+    // }
 }

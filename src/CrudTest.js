@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faPenToSquare} from '@fortawesome/free-solid-svg-icons'
 import ThemeProvider from 'react-bootstrap/ThemeProvider'
-import { Container, Row, Col, Card, Table, Button, Form, InputGroup } from 'react-bootstrap';
+import { Container, Row, Col, Card, Table, Button, Form, InputGroup, Modal } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,7 @@ export class CrudTest extends React.Component {
     constructor() {
       super();
       this.state = {
+        isShowModal   : false,
         isUpdate      : false,
         validated     : false,
         users         : [],
@@ -61,8 +62,9 @@ export class CrudTest extends React.Component {
      
    }
 
-   //User Submit Create
-   handleUserSubmit = (e) =>{
+   
+   //validateSubmitForm
+   validateForm = (e) =>{
     let token = localStorage.getItem('token') 
     const form = e.currentTarget; 
     e.preventDefault();
@@ -74,63 +76,47 @@ export class CrudTest extends React.Component {
  
     else if(form.checkValidity() === true){
       //Create user
-      let postData = {
-        emp_id        : this.state.emp_id,
-        name          : this.state.name,
-        phone         : this.state.phone,
-        email         : this.state.email,
-        location      : this.state.location,
-        company       : this.state.company,
-        token         : this.token
-     }
+      
+     this.setState({
+        isShowModal : true
+     })
      
-    //  //Updating user 
-    //  setUsers([...users, user])
-     
-    //  axios({
-    //      method: 'POST',
-    //      url:process.env.BASE_URL + '/admin-register',
-    //      data: user,
-    //      headers: {
-    //          "Content-Type": "application/json",
-    //          "Authorization": 'Bearer ' + token,
-     
-    //      }
-    //  })
-    //  .then(res => {
-    //      let response = res.data 
-    //      console.log(JSON.stringify(response))
-    //      if(response.status){
-            
-             
-    //      }
-    //      else{
-    //          //Validation
-             
-             
-    //      }
-    //  })
-        API.User.create(postData,token) 
+    }
+    this.setState({validated: true})
+   }
+
+    handleCreate = () =>{
+        let postData = {
+            emp_id        : this.state.emp_id,
+            name          : this.state.name,
+            phone         : this.state.phone,
+            email         : this.state.email,
+            location      : this.state.location,
+            company       : this.state.company,
+            token         : this.token
+        }
+       API.User.create(postData,this.token) 
         .then(res => {
             let response = res.data
             console.log(JSON.stringify(response))
             if (response.status) {
-
-
+                this.setState({
+                    isShowModal : false,
+                    emp_id        : '',
+                    name          : '',
+                    phone         : '',
+                    email         : '',
+                    location      : '',
+                    company       : '',
+                    token         : '',
+                 })
             } else {
                 //Validation
 
 
             }
         });
-  
     }
-    
-    
-    this.setState({validated: true})
-  
-    
-  };
 
     handleChange(key,value){
         let data = {}
@@ -142,12 +128,13 @@ export class CrudTest extends React.Component {
     componentDidMount() {
         console.log('mounted')
         API.User.getAll(this.token)
-        .then(res => {
+        .then(response => {
+            let res = response.data
         this.setState({
-            users: res?.data
+            users: res.data.employees
         })
-        
-        console.log("data",res?.data)
+        console.log(response)
+        console.log("data",res.data.employees)
         console.log("users state", this.state.users)
         })
     }
@@ -215,7 +202,7 @@ export class CrudTest extends React.Component {
                                         <Card className="card-round">
                                             <Card.Body>
                                                 <h3><FontAwesomeIcon icon={faUser} className="me-2"/> Add Users</h3>
-                                                <Form noValidate validated={this.state.validated} onSubmit={this.handleUserSubmit} className="userform">
+                                                <Form noValidate validated={this.state.validated} onSubmit={this.validateForm} className="userform">
                                                     <Row className="mb-3">
                                                         <Form.Group as={Col} md="6" controlId="validationCustom01">
                                                             <Form.Label className="float-start mb-0">Name</Form.Label>
@@ -395,6 +382,27 @@ export class CrudTest extends React.Component {
                     </Row>
                 </Container>
             </ThemeProvider>
+            <Modal show={this.state.isShowModal} onHide={() => this.handleChange('isShowModal', false)}>
+                <Modal.Header closeButton>
+                <Modal.Title>Modal heading</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <p>{this.state.name}</p>
+                  <p>{this.state.phone}</p>
+                  <p>{this.state.email}</p>
+                  <p>{this.state.company}</p>
+                  <p>{this.state.location}</p>
+                  <p>{this.state.id}</p>
+                </Modal.Body>
+                <Modal.Footer>
+                <Button variant="secondary" onClick={() => this.handleChange('isShowModal', false)}>
+                    Close
+                </Button>
+                <Button variant="primary" onClick={this.handleCreate}>
+                    Save Changes
+                </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
       );
   }
