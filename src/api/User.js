@@ -5,10 +5,10 @@ export default {
     create(postData, token) {
         return axios({
                 method: 'POST',
-                url: process.env.REACT_APP_BASE_URL + '/admin-register',
+                url: process.env.REACT_APP_BASE_URL + '/employees',
                 data: postData,
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "multipart/form-data",
                     "Authorization": 'Bearer ' + token,
 
                 }
@@ -25,5 +25,19 @@ export default {
                 }
             })
             
+    },
+
+    login(email,password){
+       return axios({
+            method: 'POST',
+            url: process.env.REACT_APP_BASE_URL + '/login',
+            data: {
+                email: email,
+                password: password
+            },
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+      })
     }
 }

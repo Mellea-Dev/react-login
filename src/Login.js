@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import gifBg from './login-bg.gif';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import API from "./api/API";
 
 
 function Login(){
@@ -15,7 +15,7 @@ function Login(){
     
     useEffect(() =>{
         if(!(localStorage.getItem('token')==="null" || localStorage.getItem('token')==="" || localStorage.getItem('token')===null)){
-         navigate('/crud')
+         navigate('/crudtest')
         }
         
     }, [])
@@ -27,18 +27,7 @@ function Login(){
     
     const hundleLogin = (e) =>{
        e.preventDefault();
-       console.log(username,password);
-        axios({
-            method: 'POST',
-            url:'https://marketplace2.unified.ph/Login',
-            data: {
-                username: username,
-                password: password
-            },
-            headers: {
-                "Content-Type": "multipart/form-data"
-            }
-        })
+        API.User.login(username,password)
         .then(res => {
             let response = res.data 
             console.log(JSON.stringify(response))
@@ -46,7 +35,7 @@ function Login(){
                 localStorage.setItem('token', response.token)
                 localStorage.setItem('username',username)
             
-                navigate('/crud')
+                navigate('/crudtest')
             }
             else{
                 //Validation
