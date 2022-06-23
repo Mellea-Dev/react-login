@@ -3,8 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faPenToSquare} from '@fortawesome/free-solid-svg-icons'
 import ThemeProvider from 'react-bootstrap/ThemeProvider'
 import { Container, Row, Col, Card, Table, Button, Form, InputGroup, Modal } from 'react-bootstrap';
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from "./api/API";
 
@@ -19,6 +18,7 @@ export class CrudTest extends React.Component {
         isUpdate      : false,
         validated     : false,
         users         : [],
+        id            : '',
         emp_id        : '',
         name          : '',
         phone         : '',
@@ -27,45 +27,16 @@ export class CrudTest extends React.Component {
         company       : '',
       };
       this.token=localStorage.getItem('token')
+     
     }
 
-    //user update in local storage
-    userUpdate(user, emp_id){
-      // setForm(true)
-      // setId(index);
-      // setFirstName(user.firstname);
-      // setMiddleInitial(user.middleinitial)
-      // setLastName(user.lastname);
-      // setUserName(user.username);
-      // setEmail(user.email);
-      // setContact(user.contact);
-      // setPassword(user.password);
-      this.setState({
-        isUpdate      : false,
-        emp_id        : user.emp_id,
-        name          : user.name,
-        phone         : user.phone,
-        email         : user.email,
-        location      : user.location,
-        company       : user.cmpany
-      })
-    }
-    // delete
-    userDelete(id){
-      alert('Are you sure you want to delete?')
-     const del = this.state.users.filter((user)=>{
-      return user.emp_id !== id;
-     })
-     this.setState({
-       users: del
-     })
-     
-   }
+    
+
+   
 
    
    //validateSubmitForm
    validateForm = (e) =>{
-    let token = localStorage.getItem('token') 
     const form = e.currentTarget; 
     e.preventDefault();
     if (form.checkValidity() === false) {
@@ -117,6 +88,58 @@ export class CrudTest extends React.Component {
             }
         });
     }
+
+
+    //user update user states
+    userUpdate(user){
+        this.setState({
+          isUpdate      : true,
+          id            : user.id,
+          emp_id        : user.emp_id,
+          name          : user.name,
+          phone         : user.phone,
+          email         : user.email,
+          location      : user.location,
+          company       : user.company
+        })
+    }
+
+    handleUpdate = (e) =>{
+        e.preventDefault()
+        let putData = {
+            id            : this.state.id,
+            emp_id        : this.state.emp_id,
+            name          : this.state.name,
+            phone         : this.state.phone,
+            email         : this.state.email,
+            location      : this.state.location,
+            company       : this.state.company,
+            token         : this.token
+        }
+        API.User.update(putData, this.state.id, this.token)
+        .then(response => {
+
+          console.log(response)
+          
+        })
+        
+    }
+
+    handleDelete = (id) =>{
+        API.User.delete(id, this.token)
+        .then(response => {
+            console.log(response)
+            let res = response.data;
+            if(res.status){
+                this.props.navigate('/crudtest')
+                alert('successfully deleted')
+            }
+            else{
+                //validation
+            }
+        })
+    }
+   
 
     handleChange(key,value){
         let data = {}
@@ -178,7 +201,7 @@ export class CrudTest extends React.Component {
                                                      {this.state.isUpdate===false&&(
                                                         <>
                                                             <td><Button variant="outline-primary" onClick={()=>this.userUpdate(user,index)}>Edit</Button>{' '}</td>
-                                                            <td><Button variant="outline-danger" onClick={()=>this.userDelete(user.emp_id)}>Delete</Button>{' '}</td>
+                                                            <td><Button variant="outline-danger" onClick={()=>this.handleDelete(user.id)}>Delete</Button>{' '}</td>
                                                         </>
                                                      )}
                                                      {this.state.isUpdate===true&&(
@@ -301,7 +324,7 @@ export class CrudTest extends React.Component {
                                         <Card className="card-round">
                                             <Card.Body>
                                                 <h3><FontAwesomeIcon icon={faUser} className="me-2"/> Update Users</h3>
-                                                <Form noValidate validated={this.state.validated} onSubmit={this.handleUserUpdate} className="userform">
+                                                <Form noValidate validated={this.state.validated} onSubmit={this.handleUpdate} className="userform">
                                                 <Row className="mb-3">
                                                     <Form.Group as={Col} md="6" controlId="validationCustom01">
                                                         <Form.Label className="float-start mb-0">Name</Form.Label>
@@ -407,6 +430,12 @@ export class CrudTest extends React.Component {
       );
   }
 
+  
  
+}
+
+export function Crudwithprops(props) {
+    const navigate = useNavigate()
+    return(<CrudTest navigate={navigate}></CrudTest>)
 }
 

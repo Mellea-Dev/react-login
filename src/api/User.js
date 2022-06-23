@@ -1,5 +1,4 @@
 import axios from "axios"
-
 export default {
     //Api end-point for createing users
     create(postData, token) {
@@ -42,12 +41,29 @@ export default {
                 "Content-Type": "multipart/form-data"
             }
       })
-    }
+    },
 
-    // update(postData,token){
-    //     return axios({
-    //         method: 'POST',
-    //         url: process.env.REACT_APP_BASE_URL + '/login',
-    //     })
-    // }
+    update(putData, id, token){
+        return axios({
+            method: 'PUT',
+            url: process.env.REACT_APP_BASE_URL + '/employees/' +id ,
+            headers: {
+                "Authorization": 'Bearer ' + token,
+            },
+            data: putData
+        })
+    },
+
+    delete(id, token){
+        return axios({
+            method: 'DELETE',
+            url: process.env.REACT_APP_BASE_URL + '/employees/' +id ,
+            headers: {
+                "Authorization": 'Bearer ' + token,
+            },
+            params:{
+                "token": token,
+            }
+        })
+    }
 }

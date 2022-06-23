@@ -4,7 +4,6 @@ import { Container, Row, Col, Card, Button, Form, InputGroup, Alert } from 'reac
 import { useNavigate } from 'react-router-dom';
 import gifBg from './login-bg.gif';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import API from "./api/API";
 
 

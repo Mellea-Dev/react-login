@@ -3,8 +3,8 @@ import Crud from './Crud';
 import './App.css';
 import Login from './Login';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import { CrudTest } from './CrudTest';
-import React, { useEffect, useState } from 'react';
+import { Crudwithprops } from './CrudTest';
+import React from 'react';
 
 import Dashboard from './Dashboard';
 
@@ -24,7 +24,7 @@ export class App extends React.Component{
             <Route path='/crud' element={<Crud />} />
             <Route path='/login' element={<Login />} />
             <Route path='/dashboard' element={<Dashboard />}  />
-            <Route path='/crudtest' element={<CrudTest />}  />
+            <Route path='/crudtest' element={<Crudwithprops />}  />
           </Routes>
         </Router>
       </div>
