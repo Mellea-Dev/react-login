@@ -81,6 +81,7 @@ export class CrudTest extends React.Component {
                     company       : '',
                     token         : '',
                  })
+                 this.getUsers()
             } else {
                 //Validation
 
@@ -130,8 +131,9 @@ export class CrudTest extends React.Component {
         .then(response => {
             console.log(response)
             let res = response.data;
+            const {navigate} = this.props;
             if(res.status){
-                this.props.navigate('/crudtest')
+                this.getUsers()
                 alert('successfully deleted')
             }
             else{
@@ -146,20 +148,20 @@ export class CrudTest extends React.Component {
         data[key] = value;
         this.setState(data);
     } 
-  
-
-    componentDidMount() {
-        console.log('mounted')
+    
+    getUsers(){
         API.User.getAll(this.token)
         .then(response => {
             let res = response.data
-        this.setState({
-            users: res.data.employees
+            this.setState({
+                users: res.data.employees
+            })
         })
-        console.log(response)
-        console.log("data",res.data.employees)
-        console.log("users state", this.state.users)
-        })
+    }
+
+    componentDidMount() {
+        console.log('mounted')
+        this.getUsers()
     }
    
   
@@ -436,6 +438,6 @@ export class CrudTest extends React.Component {
 
 export function Crudwithprops(props) {
     const navigate = useNavigate()
-    return(<CrudTest navigate={navigate}></CrudTest>)
+    return(<CrudTest {...props} navigate={navigate}></CrudTest>)
 }
 
