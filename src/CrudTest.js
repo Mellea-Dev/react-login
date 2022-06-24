@@ -120,7 +120,7 @@ export class CrudTest extends React.Component {
         API.User.update(putData, this.state.id, this.token)
         .then(response => {
 
-          console.log(response)
+        //   console.log(response)
           
         })
         
@@ -129,9 +129,8 @@ export class CrudTest extends React.Component {
     handleDelete = (id) =>{
         API.User.delete(id, this.token)
         .then(response => {
-            console.log(response)
+            // console.log(response)
             let res = response.data;
-            const {navigate} = this.props;
             if(res.status){
                 this.getUsers()
                 alert('successfully deleted')
@@ -150,22 +149,32 @@ export class CrudTest extends React.Component {
     } 
     
     getUsers(){
+        const { navigate } = this.props;
         API.User.getAll(this.token)
         .then(response => {
+            
             let res = response.data
             this.setState({
                 users: res.data.employees
             })
+            console.log(response)
         })
+        .catch(function (error) {
+            if (error.response.status === 401) {
+                window.localStorage.setItem('token', null);
+                navigate('/login')
+             }
+        });
     }
 
     componentDidMount() {
-        console.log('mounted')
+        // console.log('mounted')
         this.getUsers()
     }
    
   
     render() {
+    
       return (
         <div className='data-app'>
             <ThemeProvider breakpoints={['xxxl', 'xxl', 'xl', 'lg', 'md', 'sm', 'xs', 'xxs']}>

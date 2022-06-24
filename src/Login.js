@@ -33,7 +33,6 @@ function Login(){
             if(response.status){
                 localStorage.setItem('token', response.token)
                 localStorage.setItem('username',username)
-            
                 navigate('/crudtest')
             }
             else{
