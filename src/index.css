@@ -3,6 +3,7 @@ body {
   font-family: 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #eeecec;
 }
 
 .custom-shape-divider-bottom-1655087107 {
@@ -55,8 +56,8 @@ body {
 
 .card-round{
   border-radius: 20px;
-  box-shadow: 5px 10px rgba(212, 202, 202, 0.24);
-  border: 0px 0px 0px 0px;
+  box-shadow: 2px 2px 4px #bebbbb;
+  border: none;
 }
 
 .h1{
@@ -80,4 +81,36 @@ body {
 
 .input-round[type=password]:focus {
   border: 5px solid black;
+}
+
+.btn-round{
+  border-radius: 20px;
+}
+
+.btn-gradient{
+  background: linear-gradient(90deg,  rgba(182,234,246,1) 15%,  rgba(235,238,174,1)82%);
+  color: black;
+  border: none;
+  box-shadow: 2px 2px 4px #bebbbb;
+}
+
+.btn-gradient:hover{
+  background: linear-gradient(90deg, rgba(49,195,228,1) 15%,  rgba(245,255,45,1) 82%);
+  color: white;
+  border: none;
+  box-shadow: 2px 2px 4px #bebbbb
+}
+
+.btn-gradient-danger{
+  background: linear-gradient(90deg, rgba(255,190,190,1) 15%, rgba(249,255,149,1) 82%);
+  color: black;
+  border: none;
+  box-shadow: 2px 2px 4px #bebbbb;
+}
+
+.btn-gradient-danger:hover{
+  background: linear-gradient(90deg, rgba(255,119,119,1) 15%, rgba(242,255,19,1) 82%);
+  color: white;
+  border: none;
+  box-shadow: 2px 2px 4px #bebbbb;
 }

@@ -41,6 +41,11 @@ function Login(){
                 
             }
         })
+        .catch(function (error){
+            if(error.response.status ===401){
+                setShow(true)
+            }
+        })
     }
    
 
@@ -48,12 +53,12 @@ function Login(){
         <ThemeProvider breakpoints={['xxxl', 'xxl', 'xl', 'lg', 'md', 'sm', 'xs', 'xxs']}>
             <Container className='main-con'>
                 <Row className='d-flex justify-content-center'>
-                    <Col xxl={10}>
+                    <Col xxl={12}>
                     <Card className="card-round mt-5">
                             <Card.Body>
                                 <Form noValidate  className="userform" onSubmit={hundleLogin}>
                                    <Row className='d-flex justify-content-center'>
-                                     <Col xxl={7}>
+                                     <Col xxl={7} xl={7}>
                                      <Row className="mb-3 ms-2">
                                         <Col>
                                         <Alert variant="danger" show={show} onClose={() => setShow(false)} dismissible>
@@ -99,12 +104,12 @@ function Login(){
                                             </Form.Control.Feedback>
                                         </Form.Group>
                                         <div className="d-grid gap-2 mt-4">
-                                          <Button type="submit" className='btn-lg'>Login</Button>
+                                          <Button type="submit" className='btn-lg btn-round btn-gradient'>Login</Button>
                                         </div> 
                                     </Row>
                                     
                                      </Col>
-                                     <Col xxl={5} >
+                                     <Col xxl={5} xl={5}>
                                         <img src={gifBg} alt="" className='img-fluid'/>
                                      </Col>
                                    </Row>

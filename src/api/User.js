@@ -3,31 +3,41 @@ export default {
     //Api end-point for createing users
     create(postData, token) {
         return axios({
-                method: 'POST',
-                url: process.env.REACT_APP_BASE_URL + '/employees',
-                data: postData,
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    "Authorization": 'Bearer ' + token,
-
-                }
-            })
-           
+            method: 'POST',
+            url: process.env.REACT_APP_BASE_URL + '/employees',
+            data: postData,
+            headers: {
+                "Content-Type": "multipart/form-data",
+                "Authorization": 'Bearer ' + token,
+            }
+        })     
     },
 
     getAll(token) {
         return axios({
-                method: 'GET',
-                url: process.env.REACT_APP_BASE_URL + '/employees' ,
-                headers: {
-                    "Authorization": 'Bearer ' + token,
-                },
-                params: {
-                    "token": token,
-                }
-            })
-            
+            method: 'GET',
+            url: process.env.REACT_APP_BASE_URL + '/employees' ,
+            headers: {
+                "Authorization": 'Bearer ' + token,
+            },
+            params: {
+                "token": token,
+            }
+        })
     },
+
+    // View(id,token) {
+    //    return axios({
+    //     method: 'GET',
+    //     url: process.env.REACT_APP_BASE_URL + '/employees/' +id ,
+    //     headers: {
+    //         "Authorization": 'Bearer ' + token,
+    //     },
+    //     params: {
+    //         "token": token,
+    //     },
+    //    })
+    // },
 
     login(email,password){
        return axios({

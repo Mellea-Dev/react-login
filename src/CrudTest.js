@@ -1,6 +1,6 @@
 // import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faPenToSquare} from '@fortawesome/free-solid-svg-icons'
+import { faUser, faPenToSquare, faCheck} from '@fortawesome/free-solid-svg-icons'
 import ThemeProvider from 'react-bootstrap/ThemeProvider'
 import { Container, Row, Col, Card, Table, Button, Form, InputGroup, Modal } from 'react-bootstrap';
 import React from 'react';
@@ -15,6 +15,7 @@ export class CrudTest extends React.Component {
       super();
       this.state = {
         isShowModal   : false,
+        isShowModal2  : false,
         isUpdate      : false,
         validated     : false,
         users         : [],
@@ -29,10 +30,6 @@ export class CrudTest extends React.Component {
       this.token=localStorage.getItem('token')
      
     }
-
-    
-
-   
 
    
    //validateSubmitForm
@@ -55,6 +52,26 @@ export class CrudTest extends React.Component {
     }
     this.setState({validated: true})
    }
+   //validateUpdateForm
+   validateForm2 = (e) =>{
+    const form = e.currentTarget; 
+    e.preventDefault();
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+ 
+ 
+    else if(form.checkValidity() === true){
+      //Create user
+      
+     this.setState({
+        isShowModal2 : true
+     })
+     
+    }
+    this.setState({validated: true})
+   }
 
     handleCreate = () =>{
         let postData = {
@@ -72,7 +89,8 @@ export class CrudTest extends React.Component {
             console.log(JSON.stringify(response))
             if (response.status) {
                 this.setState({
-                    isShowModal : false,
+                    isShowModal   : false,
+                    validated     : false,
                     emp_id        : '',
                     name          : '',
                     phone         : '',
@@ -106,7 +124,7 @@ export class CrudTest extends React.Component {
     }
 
     handleUpdate = (e) =>{
-        e.preventDefault()
+        e.preventDefault();
         let putData = {
             id            : this.state.id,
             emp_id        : this.state.emp_id,
@@ -119,8 +137,13 @@ export class CrudTest extends React.Component {
         }
         API.User.update(putData, this.state.id, this.token)
         .then(response => {
-
-        //   console.log(response)
+            let res = response.data;
+            if(res.status){
+                this.setState({
+                    isShowModal2 : false,
+                })
+                this.getUsers() 
+            }
           
         })
         
@@ -167,11 +190,34 @@ export class CrudTest extends React.Component {
         });
     }
 
+    // getUser(){
+    //     let postData = {
+    //         id            : this.state.id,
+    //         emp_id        : this.state.emp_id,
+    //         name          : this.state.name,
+    //         phone         : this.state.phone,
+    //         email         : this.state.email,
+    //         location      : this.state.location,
+    //         company       : this.state.company,
+    //         token         : this.token
+    //     }
+    //     API.User.View(postData,this.state.id,this.token)
+    //     .then({
+
+    //     })
+    // }
+
+
+    handleLogout(){
+        const { navigate } = this.props;
+        window.localStorage.setItem('token', null);
+        navigate('/login')
+    }
+
     componentDidMount() {
         // console.log('mounted')
         this.getUsers()
     }
-   
   
     render() {
     
@@ -180,14 +226,20 @@ export class CrudTest extends React.Component {
             <ThemeProvider breakpoints={['xxxl', 'xxl', 'xl', 'lg', 'md', 'sm', 'xs', 'xxs']}>
                 <Container className='main-con'>
                     <Row className="d-flex justify-content-center">
+                        <Col xxl={12} className="d-flex justify-content-start">
+                            <Button onClick={()=>this.handleLogout()} className="btn-round btn-gradient-danger mb-2">
+                                Logout
+                            </Button>
+                        </Col>
+                                
                         <Col xxl={12} >
                             <Row>
                                 {/* TABLE */}
                                 <Col xl={8}>
                                     <Card className="card-round">
                                     <Card.Body>
-                                    <Table responsive className='table-borderless'>
-                                            <thead>
+                                    <Table responsive className='table align-middle mb-0 bg-white'>
+                                            <thead className="bg-light">
                                                 <tr>
                                                     <th>#</th>
                                                     <th className='text-start'>Name</th>
@@ -241,6 +293,7 @@ export class CrudTest extends React.Component {
                                                         <Form.Group as={Col} md="6" controlId="validationCustom01">
                                                             <Form.Label className="float-start mb-0">Name</Form.Label>
                                                             <Form.Control
+                                                                className="input-round"
                                                                 required
                                                                 type="text"
                                                                 placeholder="Fullname"
@@ -253,6 +306,7 @@ export class CrudTest extends React.Component {
                                                         <Form.Group as={Col} md="6" controlId="validationCustom02">
                                                             <Form.Label className="float-start mb-0">Email</Form.Label>
                                                             <Form.Control
+                                                                className="input-round"
                                                                 required
                                                                 type="text"
                                                                 placeholder="Email"
@@ -265,6 +319,7 @@ export class CrudTest extends React.Component {
                                                             <Form.Label className="float-start mb-0">Phone</Form.Label>
                                                             <InputGroup hasValidation>
                                                                 <Form.Control
+                                                                className="input-round"
                                                                 type="text"
                                                                 placeholder="Phone"
                                                                 aria-describedby="inputGroupPrepend"
@@ -280,6 +335,7 @@ export class CrudTest extends React.Component {
                                                         <Form.Group as={Col} md="6" controlId="validationEmail5">
                                                             <Form.Label className="float-start mb-0">Location</Form.Label>
                                                             <Form.Control
+                                                                className="input-round"
                                                                 required
                                                                 type="text"
                                                                 placeholder="Location"
@@ -295,6 +351,7 @@ export class CrudTest extends React.Component {
                                                         <Form.Group as={Col} md="6" controlId="validationEmail7">
                                                             <Form.Label className="float-start mb-0 mt-1">Company</Form.Label>
                                                             <Form.Control
+                                                                className="input-round"
                                                                 required
                                                                 type="text"
                                                                 placeholder="Company"
@@ -309,6 +366,7 @@ export class CrudTest extends React.Component {
                                                         <Form.Group as={Col} md="6" controlId="validationEmail7">
                                                             <Form.Label className="float-start mb-0 mt-1">ID</Form.Label>
                                                             <Form.Control
+                                                                className="input-round"
                                                                 required
                                                                 type="text"
                                                                 placeholder="ID"
@@ -322,7 +380,7 @@ export class CrudTest extends React.Component {
                                                         
                                                     </Row>
                                                     <div className="d-grid gap-2">
-                                                        <Button type="submit"><FontAwesomeIcon icon={faPenToSquare} className="me-2"/>Submit form</Button>
+                                                        <Button type="submit" className="btn-round btn-gradient"><FontAwesomeIcon icon={faCheck} className="me-2"/>Submit form</Button>
                                                     </div>
                                                 </Form>
                                             </Card.Body>
@@ -335,7 +393,7 @@ export class CrudTest extends React.Component {
                                         <Card className="card-round">
                                             <Card.Body>
                                                 <h3><FontAwesomeIcon icon={faUser} className="me-2"/> Update Users</h3>
-                                                <Form noValidate validated={this.state.validated} onSubmit={this.handleUpdate} className="userform">
+                                                <Form noValidate validated={this.state.validated} onSubmit={this.validateForm2} className="userform">
                                                 <Row className="mb-3">
                                                     <Form.Group as={Col} md="6" controlId="validationCustom01">
                                                         <Form.Label className="float-start mb-0">Name</Form.Label>
@@ -415,28 +473,82 @@ export class CrudTest extends React.Component {
                         </Col>
                     </Row>
                 </Container>
+                {/* MODALS */}
+                <Modal show={this.state.isShowModal} onHide={() => this.handleChange('isShowModal', false)}>
+                    <Modal.Header closeButton>
+                      <Modal.Title>Modal heading</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Row>
+                           <Col xxxl={6} xxl={6} xl={6}>
+                                <p><strong>ID:</strong></p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p>{this.state.emp_id}</p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                 <p><strong>COMPANY:</strong></p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p>{this.state.company}</p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p><strong>FULLNAME:</strong></p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p>{this.state.name}</p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p><strong>EMAIL:</strong></p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p>{this.state.email}</p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p><strong>PHONE:</strong></p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p>{this.state.phone}</p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p><strong>LOCATION:</strong></p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p>{this.state.location}</p>
+                            </Col>
+                        </Row>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => this.handleChange('isShowModal', false)}>
+                            Close
+                        </Button>
+                        <Button variant="primary" onClick={this.handleCreate}>
+                            Save Changes
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+                <Modal show={this.state.isShowModal2} onHide={() => this.handleChange('isShowModal2', false)}>
+                    <Modal.Header closeButton>
+                    <Modal.Title>Update This User</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                    <p>{this.state.name}</p>
+                    <p>{this.state.phone}</p>
+                    <p>{this.state.email}</p>
+                    <p>{this.state.company}</p>
+                    <p>{this.state.location}</p>
+                    <p>{this.state.id}</p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                    <Button variant="secondary" onClick={() => this.handleChange('isShowModal2', false)}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={this.handleUpdate}>
+                        Save Changes
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
             </ThemeProvider>
-            <Modal show={this.state.isShowModal} onHide={() => this.handleChange('isShowModal', false)}>
-                <Modal.Header closeButton>
-                <Modal.Title>Modal heading</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <p>{this.state.name}</p>
-                  <p>{this.state.phone}</p>
-                  <p>{this.state.email}</p>
-                  <p>{this.state.company}</p>
-                  <p>{this.state.location}</p>
-                  <p>{this.state.id}</p>
-                </Modal.Body>
-                <Modal.Footer>
-                <Button variant="secondary" onClick={() => this.handleChange('isShowModal', false)}>
-                    Close
-                </Button>
-                <Button variant="primary" onClick={this.handleCreate}>
-                    Save Changes
-                </Button>
-                </Modal.Footer>
-            </Modal>
         </div>
       );
   }
