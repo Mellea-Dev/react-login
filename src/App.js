@@ -1,5 +1,4 @@
 
-import Crud from './Crud';
 import './App.css';
 import Login from './Login';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
@@ -12,10 +11,9 @@ export class App extends React.Component{
   render(){
     return (
       <div className="App">
-        
         <Router>
           <Routes>
-            <Route path='/crud' element={<Crud />} />
+           <Route path='/' element={<Login />} />
             <Route path='/login' element={<Login />} />
             <Route path='/crudtest' element={<Crudwithprops />}  />
           </Routes>

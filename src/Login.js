@@ -61,7 +61,7 @@ function Login(){
                                      <Col xxl={7} xl={7}>
                                      <Row className="mb-3 ms-2">
                                         <Col>
-                                        <Alert variant="danger" show={show} onClose={() => setShow(false)} dismissible>
+                                        <Alert className="alert-bg-gradient-danger" show={show} onClose={() => setShow(false)} dismissible>
                                             <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
                                             <p>
                                                 In Valid User Credentials!!!!!!!!!!!!!

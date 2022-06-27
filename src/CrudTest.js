@@ -1,12 +1,11 @@
-// import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faPenToSquare, faCheck} from '@fortawesome/free-solid-svg-icons'
 import ThemeProvider from 'react-bootstrap/ThemeProvider'
-import { Container, Row, Col, Card, Table, Button, Form, InputGroup, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Card, Table, Button, Form, InputGroup, Modal, Alert } from 'react-bootstrap';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from "./api/API";
-import _ from "lodash";
+import _ from 'lodash';
 
 export class CrudTest extends React.Component {
  
@@ -17,8 +16,15 @@ export class CrudTest extends React.Component {
       this.state = {
         isShowModal   : false,
         isShowModal2  : false,
+        isShowLogout  : false,
         isUpdate      : false,
+        alertPhone    : false,
+        alertId       : false,
+        alertEmail    : false,
         validated     : false,
+        alertCreate   : false,
+        alertUpdate   : false,
+        alertDelete   : false,
         users         : [],
         id            : '',
         emp_id        : '',
@@ -75,6 +81,7 @@ export class CrudTest extends React.Component {
    }
 
     handleCreate = () =>{
+        const { navigate } = this.props;
         let postData = {
             emp_id        : this.state.emp_id,
             name          : this.state.name,
@@ -101,18 +108,30 @@ export class CrudTest extends React.Component {
                     company       : '',
                     token         : '',
                  })
+
                  // field Validation
                  if(res.status === "fail"){
                     console.log(res.message)
                     if(res.message[0] === "The phone must be a number." || res.message[1] === "The phone must be a number." || res.message[2] === "The phone must be a number."){
-                        alert('Invalid Phone')
+                        this.setState({
+                            alertPhone : true
+                        })
                     }
                     if(res.message[0] === "The emp id must be a number." || res.message[1] === "The emp id must be a number." || res.message[2] === "The emp id must be a number."){
-                        alert('Invalid Employee Id')
+                        this.setState({
+                            alertId : true
+                        })
                     }
                     if(res.message[0] === "The email has already been taken." || res.message[1] === "The email has already been taken." || res.message[2] === "The email has already been taken."){
-                        alert('Your email has already in our System')
+                        this.setState({
+                            alertEmail : true
+                        })
                     }
+                 }
+                 else{
+                    this.setState({
+                        alertCreate   : true,
+                    })
                  } 
                 this.getUsers()
             }
@@ -120,6 +139,12 @@ export class CrudTest extends React.Component {
             
             
         })
+        .catch(function (error) {
+            if (error.response.status === 401) {
+                window.localStorage.setItem('token', null);
+                navigate('/login')
+             }
+        });
 
         
     }
@@ -140,6 +165,7 @@ export class CrudTest extends React.Component {
     }
 
     handleUpdate = (e) =>{
+        const { navigate } = this.props;
         e.preventDefault();
         let putData = {
             id            : this.state.id,
@@ -166,27 +192,45 @@ export class CrudTest extends React.Component {
                     location     : '',
                     company      : ''
                 })
-                //field Validation
+                // field Validation
                 if(res.status === "fail"){
                     console.log(res.message)
                     if(res.message[0] === "The phone must be a number." || res.message[1] === "The phone must be a number." || res.message[2] === "The phone must be a number."){
-                        alert('Invalid Phone')
+                        this.setState({
+                            alertPhone : true
+                        })
                     }
                     if(res.message[0] === "The emp id must be a number." || res.message[1] === "The emp id must be a number." || res.message[2] === "The emp id must be a number."){
-                        alert('Invalid Employee Id')
+                        this.setState({
+                            alertId : true
+                        })
                     }
                     if(res.message[0] === "The email has already been taken." || res.message[1] === "The email has already been taken." || res.message[2] === "The email has already been taken."){
-                        alert('Your email has already in our System')
+                        this.setState({
+                            alertEmail : true
+                        })
                     }
+                 }
+                 else{
+                    this.setState({
+                        alertUpdate   : true,
+                    })
                  } 
                 this.getUsers() 
             }
           
         })
+        .catch(function (error) {
+            if (error.response.status === 401) {
+                window.localStorage.setItem('token', null);
+                navigate('/login')
+             }
+        });
         
     }
 
     handleDelete = (id) =>{
+        const { navigate } = this.props;
         API.User.delete(id, this.token)
         .then(response => {
             // console.log(response)
@@ -194,11 +238,20 @@ export class CrudTest extends React.Component {
             if(res.status){
                 this.getUsers()
                 alert('successfully deleted')
+                this.setState({
+                    alertDelete : true
+                })
             }
             else{
                 //validation
             }
         })
+        .catch(function (error) {
+            if (error.response.status === 401) {
+                window.localStorage.setItem('token', null);
+                navigate('/login')
+             }
+        });
     }
    
 
@@ -214,9 +267,11 @@ export class CrudTest extends React.Component {
         .then(response => {
             const _ = require("lodash"); 
             let res = response.data
+            let employeeList = res.data.employees
+            let sort = _.orderBy(employeeList, ['created_at'], ['desc'])
+            console.log(sort)
             this.setState({
-                users: res.data.employees
-                // users : userlist
+                users: sort,
             })
             console.log(response)
             
@@ -229,25 +284,7 @@ export class CrudTest extends React.Component {
         });
     }
 
-    // getUser(){
-    //     let postData = {
-    //         id            : this.state.id,
-    //         emp_id        : this.state.emp_id,
-    //         name          : this.state.name,
-    //         phone         : this.state.phone,
-    //         email         : this.state.email,
-    //         location      : this.state.location,
-    //         company       : this.state.company,
-    //         token         : this.token
-    //     }
-    //     API.User.View(postData,this.state.id,this.token)
-    //     .then({
-
-    //     })
-    // }
-
-
-    handleLogout(){
+    handleLogout = () =>{
         const { navigate } = this.props;
         window.localStorage.setItem('token', null);
         navigate('/login')
@@ -258,6 +295,13 @@ export class CrudTest extends React.Component {
         this.getUsers()
     }
   
+
+    Logout = (e) => {
+        e.preventDefault();
+       this.setState({
+        isShowLogout : true
+       })
+    }
     render() {
     
       return (
@@ -265,11 +309,30 @@ export class CrudTest extends React.Component {
             <ThemeProvider breakpoints={['xxxl', 'xxl', 'xl', 'lg', 'md', 'sm', 'xs', 'xxs']}>
                 <Container className='main-con'>
                     <Row className="d-flex justify-content-center">
+                        
+                        <Col xxl={12} className="d-flex justify-content-start">
+                            <Form onSubmit={this.Logout}>
+                                <Button type="submit" className="btn-round btn-gradient-danger mb-2">
+                                    Logout
+                                </Button>
+                            </Form>
+                            
+                        </Col>
 
                         <Col xxl={12} className="d-flex justify-content-start">
-                            <Button onClick={()=>this.handleLogout()} className="btn-round btn-gradient-danger mb-2">
-                                Logout
-                            </Button>
+                            {/* Alert success */}
+                            {/* Alert Create */}
+                            <Alert show={this.state.alertCreate} className="alert-bg-gradient-primary" onClose={() => this.handleChange('alertCreate', false)} dismissible>
+                                <Alert.Heading>Employee Successfully Added</Alert.Heading>
+                            </Alert>
+                            {/* Alert Update */}
+                            <Alert show={this.state.alertUpdate} className="alert-bg-gradient-primary" onClose={() => this.handleChange('alertUpdate', false)} dismissible>
+                                <Alert.Heading>Employee Successfully Updated</Alert.Heading>
+                            </Alert>
+                            {/* Alert Delete */}
+                            <Alert show={this.state.alertDelete} className="alert-bg-gradient-danger" onClose={() => this.handleChange('alertDelete', false)} dismissible>
+                                <Alert.Heading>Employee Data has been Deleted!</Alert.Heading>
+                            </Alert>
                         </Col>
                                 
                         <Col xxl={12} >
@@ -287,6 +350,7 @@ export class CrudTest extends React.Component {
                                                     <th className='text-start'>Email</th>
                                                     <th className='text-start'>Location</th>
                                                     <th className='text-start'>Company</th>
+                                                    <th className='text-start'>Created_At</th>
                                                     <th className='text-start' colSpan={2}>Action</th>
                                                 </tr>
                                             </thead>
@@ -301,6 +365,7 @@ export class CrudTest extends React.Component {
                                                      <td className="text-start">{user.email}</td>
                                                      <td className="text-start">{user.location}</td>
                                                      <td className="text-start">{user.company}</td>
+                                                     <td className="text-start">{user.created_at}</td>
                                                      {this.state.isUpdate===false&&(
                                                         <>
                                                             <td><Button variant="outline-primary" onClick={()=>this.userUpdate(user,index)}>Edit</Button>{' '}</td>
@@ -323,8 +388,31 @@ export class CrudTest extends React.Component {
                                     </Card>
                                 </Col>
                                 {/* CREATE FORM */}
+                                
                                 {this.state.isUpdate===false&&(
                                    <Col xl={4} className="mt-2">
+                                        {/* Error Alerts */}
+                                        {/* Alert For Invalid Phone Number */}
+                                        <Alert show={this.state.alertPhone} className="alert-bg-gradient-danger" onClose={() => this.handleChange('alertPhone', false)} dismissible>
+                                            <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+                                            <p>
+                                            Phone must be a number.
+                                            </p>
+                                        </Alert>
+                                        {/* Alert For Invalid Emp ID */}
+                                        <Alert show={this.state.alertId} className="alert-bg-gradient-danger" onClose={() => this.handleChange('alertId', false)} dismissible>
+                                            <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+                                            <p>
+                                            Employee ID must be a number.
+                                            </p>
+                                        </Alert>
+                                        {/* Alert For Existing Email */}
+                                        <Alert show={this.state.alertEmail} className="alert-bg-gradient-danger" onClose={() => this.handleChange('alertEmail', false)} dismissible>
+                                            <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+                                            <p>
+                                            Employee ID must be a number.
+                                            </p>
+                                        </Alert>
                                         <Card className="card-round">
                                             <Card.Body>
                                                 <h3><FontAwesomeIcon icon={faUser} className="me-2"/> Add Users</h3>
@@ -430,6 +518,28 @@ export class CrudTest extends React.Component {
                                {/* UPDATE FORM */}
                                {this.state.isUpdate===true&&(
                                    <Col xl={4}>
+                                         {/* Error Alerts */}
+                                        {/* Alert For Invalid Phone Number */}
+                                        <Alert show={this.state.alertPhone} className="alert-bg-gradient-danger" onClose={() => this.handleChange('alertPhone', false)} dismissible>
+                                            <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+                                            <p>
+                                            Phone must be a number.
+                                            </p>
+                                        </Alert>
+                                        {/* Alert For Invalid Emp ID */}
+                                        <Alert show={this.state.alertId} className="alert-bg-gradient-danger" onClose={() => this.handleChange('alertId', false)} dismissible>
+                                            <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+                                            <p>
+                                            Employee ID must be a number.
+                                            </p>
+                                        </Alert>
+                                        {/* Alert For Existing Email */}
+                                        <Alert show={this.state.alertEmail} className="alert-bg-gradient-danger" onClose={() => this.handleChange('alertEmail', false)} dismissible>
+                                            <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+                                            <p>
+                                            Employee ID must be a number.
+                                            </p>
+                                        </Alert>
                                         <Card className="card-round">
                                             <Card.Body>
                                                 <h3><FontAwesomeIcon icon={faUser} className="me-2"/> Update Users</h3>
@@ -617,6 +727,29 @@ export class CrudTest extends React.Component {
                     </Button>
                     <Button variant="primary" onClick={this.handleUpdate}>
                         Save Changes
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
+                <Modal show={this.state.isShowLogout} onHide={() => this.handleChange('isShowLogout', false)}>
+                    <Modal.Header closeButton>
+                
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Card className="border-round">
+                            <Card.Body>
+                                <Card.Title>Logout</Card.Title>
+                                <Card.Text>
+                                Are you sure you want to logout?
+                                </Card.Text>
+                            </Card.Body>
+                        </Card>
+                    </Modal.Body>
+                    <Modal.Footer>
+                    <Button className="btn-round btn-gradient-danger" onClick={() => this.handleChange('isShowLogout', false)}>
+                        Close
+                    </Button>
+                    <Button className="btn-round btn-gradient-danger" onClick={()=>this.handleLogout()}>
+                        Logout
                     </Button>
                     </Modal.Footer>
                 </Modal>

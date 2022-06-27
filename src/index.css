@@ -114,3 +114,19 @@ body {
   border: none;
   box-shadow: 2px 2px 4px #bebbbb;
 }
+
+.alert-bg-gradient-danger{
+  background: linear-gradient(90deg, rgba(255,190,190,1) 15%, rgba(249,255,149,1) 82%);
+  color: rgb(250, 131, 131);
+  border-radius: 20px;
+  border: none;
+  box-shadow: 2px 2px 4px #bebbbb;
+}
+
+.alert-bg-gradient-primary{
+  background: linear-gradient(90deg,  rgba(182,234,246,1) 15%,  rgba(235,238,174,1)82%);
+  color: rgb(125, 154, 252);
+  border-radius: 20px;
+  border: none;
+  box-shadow: 2px 2px 4px #bebbbb;
+}
