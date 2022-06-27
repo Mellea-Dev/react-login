@@ -265,6 +265,7 @@ export class CrudTest extends React.Component {
             <ThemeProvider breakpoints={['xxxl', 'xxl', 'xl', 'lg', 'md', 'sm', 'xs', 'xxs']}>
                 <Container className='main-con'>
                     <Row className="d-flex justify-content-center">
+
                         <Col xxl={12} className="d-flex justify-content-start">
                             <Button onClick={()=>this.handleLogout()} className="btn-round btn-gradient-danger mb-2">
                                 Logout
@@ -274,7 +275,7 @@ export class CrudTest extends React.Component {
                         <Col xxl={12} >
                             <Row>
                                 {/* TABLE */}
-                                <Col xl={8}>
+                                <Col xl={8} className="mt-2">
                                     <Card className="card-round">
                                     <Card.Body>
                                     <Table responsive className='table align-middle mb-0 bg-white'>
@@ -323,7 +324,7 @@ export class CrudTest extends React.Component {
                                 </Col>
                                 {/* CREATE FORM */}
                                 {this.state.isUpdate===false&&(
-                                   <Col xl={4}>
+                                   <Col xl={4} className="mt-2">
                                         <Card className="card-round">
                                             <Card.Body>
                                                 <h3><FontAwesomeIcon icon={faUser} className="me-2"/> Add Users</h3>
