@@ -6,6 +6,7 @@ import { Container, Row, Col, Card, Table, Button, Form, InputGroup, Modal } fro
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from "./api/API";
+import _ from "lodash";
 
 export class CrudTest extends React.Component {
  
@@ -84,10 +85,11 @@ export class CrudTest extends React.Component {
             token         : this.token
         }
        API.User.create(postData,this.token) 
-        .then(res => {
-            let response = res.data
-            console.log(JSON.stringify(response))
-            if (response.status) {
+        .then(response => {
+            let res = response.data
+            console.log(JSON.stringify(res))
+            console.log(response)
+            if (res.status) {
                 this.setState({
                     isShowModal   : false,
                     validated     : false,
@@ -99,13 +101,27 @@ export class CrudTest extends React.Component {
                     company       : '',
                     token         : '',
                  })
-                 this.getUsers()
-            } else {
-                //Validation
-
-
+                 // field Validation
+                 if(res.status === "fail"){
+                    console.log(res.message)
+                    if(res.message[0] === "The phone must be a number." || res.message[1] === "The phone must be a number." || res.message[2] === "The phone must be a number."){
+                        alert('Invalid Phone')
+                    }
+                    if(res.message[0] === "The emp id must be a number." || res.message[1] === "The emp id must be a number." || res.message[2] === "The emp id must be a number."){
+                        alert('Invalid Employee Id')
+                    }
+                    if(res.message[0] === "The email has already been taken." || res.message[1] === "The email has already been taken." || res.message[2] === "The email has already been taken."){
+                        alert('Your email has already in our System')
+                    }
+                 } 
+                this.getUsers()
             }
-        });
+            
+            
+            
+        })
+
+        
     }
 
 
@@ -141,7 +157,28 @@ export class CrudTest extends React.Component {
             if(res.status){
                 this.setState({
                     isShowModal2 : false,
+                    validated    : false,
+                    isUpdate     : false,
+                    emp_id       : '',
+                    name         : '',
+                    phone        : '',
+                    email        : '',
+                    location     : '',
+                    company      : ''
                 })
+                //field Validation
+                if(res.status === "fail"){
+                    console.log(res.message)
+                    if(res.message[0] === "The phone must be a number." || res.message[1] === "The phone must be a number." || res.message[2] === "The phone must be a number."){
+                        alert('Invalid Phone')
+                    }
+                    if(res.message[0] === "The emp id must be a number." || res.message[1] === "The emp id must be a number." || res.message[2] === "The emp id must be a number."){
+                        alert('Invalid Employee Id')
+                    }
+                    if(res.message[0] === "The email has already been taken." || res.message[1] === "The email has already been taken." || res.message[2] === "The email has already been taken."){
+                        alert('Your email has already in our System')
+                    }
+                 } 
                 this.getUsers() 
             }
           
@@ -175,12 +212,14 @@ export class CrudTest extends React.Component {
         const { navigate } = this.props;
         API.User.getAll(this.token)
         .then(response => {
-            
+            const _ = require("lodash"); 
             let res = response.data
             this.setState({
                 users: res.data.employees
+                // users : userlist
             })
             console.log(response)
+            
         })
         .catch(function (error) {
             if (error.response.status === 401) {
@@ -532,12 +571,44 @@ export class CrudTest extends React.Component {
                     <Modal.Title>Update This User</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                    <p>{this.state.name}</p>
-                    <p>{this.state.phone}</p>
-                    <p>{this.state.email}</p>
-                    <p>{this.state.company}</p>
-                    <p>{this.state.location}</p>
-                    <p>{this.state.id}</p>
+                    <Row>
+                           <Col xxxl={6} xxl={6} xl={6}>
+                                <p><strong>ID:</strong></p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p>{this.state.emp_id}</p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                 <p><strong>COMPANY:</strong></p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p>{this.state.company}</p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p><strong>FULLNAME:</strong></p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p>{this.state.name}</p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p><strong>EMAIL:</strong></p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p>{this.state.email}</p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p><strong>PHONE:</strong></p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p>{this.state.phone}</p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p><strong>LOCATION:</strong></p>
+                            </Col>
+                            <Col xxxl={6} xxl={6} xl={6}>
+                                <p>{this.state.location}</p>
+                            </Col>
+                        </Row>
                     </Modal.Body>
                     <Modal.Footer>
                     <Button variant="secondary" onClick={() => this.handleChange('isShowModal2', false)}>
