@@ -107,14 +107,11 @@ function Login(){
                                           <Button type="submit" className='btn-lg btn-round btn-gradient'>Login</Button>
                                         </div> 
                                     </Row>
-                                    
                                      </Col>
                                      <Col xxl={5} xl={5}>
                                         <img src={gifBg} alt="" className='img-fluid'/>
                                      </Col>
                                    </Row>
-                                    
-                                    
                                 </Form>
                             </Card.Body>
                         </Card>
