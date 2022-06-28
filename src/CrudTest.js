@@ -239,9 +239,7 @@ export class CrudTest extends React.Component {
             let res = response.data;
             if(res.status){
                 this.getUsers()
-                this.setState({
-                    alertDelete : true
-                })
+               alert('Data has been Deleted')
             }
             else{
                 //validation
