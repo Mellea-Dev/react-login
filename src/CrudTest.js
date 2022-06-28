@@ -1,11 +1,13 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faPenToSquare, faCheck} from '@fortawesome/free-solid-svg-icons'
 import ThemeProvider from 'react-bootstrap/ThemeProvider'
-import { Container, Row, Col, Card, Table, Button, Form, InputGroup, Modal, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Card, Table, Button, Form, InputGroup, Modal, Alert, ModalTitle } from 'react-bootstrap';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from "./api/API";
 import _ from 'lodash';
+import warningimg from "./Warning.gif";
+import empty from "./Empty.gif";
 
 export class CrudTest extends React.Component {
  
@@ -237,7 +239,6 @@ export class CrudTest extends React.Component {
             let res = response.data;
             if(res.status){
                 this.getUsers()
-                alert('successfully deleted')
                 this.setState({
                     alertDelete : true
                 })
@@ -269,7 +270,7 @@ export class CrudTest extends React.Component {
             let res = response.data
             let employeeList = res.data.employees
             let sort = _.orderBy(employeeList, ['created_at'], ['desc'])
-            console.log(sort)
+            // console.log(sort)
             this.setState({
                 users: sort,
             })
@@ -382,8 +383,20 @@ export class CrudTest extends React.Component {
                                                 ))}
                                                 </>
                                                )}
-                                            </tbody>
+                                            </tbody> 
                                         </Table>
+                                        {this.state.users.length<=0&&(
+                                            <Container>
+                                                <Row>
+                                                    <Col xxl={12} className="d-flex justify-content-center">
+                                                    <img src={empty} alt="" className=''/>
+                                                    </Col>
+                                                    <Col xxl={12} className="d-flex justify-content-center">
+                                                    <h2 className="text-danger">Your List is Empty!!</h2>
+                                                    </Col>
+                                                </Row>
+                                            </Container>
+                                        )}
                                     </Card.Body>
                                     </Card>
                                 </Col>
@@ -731,18 +744,9 @@ export class CrudTest extends React.Component {
                     </Modal.Footer>
                 </Modal>
                 <Modal show={this.state.isShowLogout} onHide={() => this.handleChange('isShowLogout', false)}>
-                    <Modal.Header closeButton>
-                
-                    </Modal.Header>
                     <Modal.Body>
-                        <Card className="border-round">
-                            <Card.Body>
-                                <Card.Title>Logout</Card.Title>
-                                <Card.Text>
-                                Are you sure you want to logout?
-                                </Card.Text>
-                            </Card.Body>
-                        </Card>
+                        <img src={warningimg} alt="" className='img-fluid'/>  
+                        <ModalTitle className="text-center text-danger">Are you sure you want to logout?</ModalTitle>
                     </Modal.Body>
                     <Modal.Footer>
                     <Button className="btn-round btn-gradient-danger" onClick={() => this.handleChange('isShowLogout', false)}>
@@ -753,6 +757,7 @@ export class CrudTest extends React.Component {
                     </Button>
                     </Modal.Footer>
                 </Modal>
+                
             </ThemeProvider>
         </div>
       );
