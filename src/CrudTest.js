@@ -8,6 +8,7 @@ import API from "./api/API";
 import _ from 'lodash';
 import warningimg from "./Warning.gif";
 import empty from "./Empty.gif";
+import Swal from "sweetalert2";
 
 export class CrudTest extends React.Component {
  
@@ -113,27 +114,52 @@ export class CrudTest extends React.Component {
 
                  // field Validation
                  if(res.status === "fail"){
-                    console.log(res.message)
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-right',
+                        iconColor: 'white',
+                        customClass: {
+                          popup: 'colored-toast'
+                        },
+                        showConfirmButton: false,
+                        timer: 3500,
+                        timerProgressBar: true
+                      })
                     if(res.message[0] === "The phone must be a number." || res.message[1] === "The phone must be a number." || res.message[2] === "The phone must be a number."){
-                        this.setState({
-                            alertPhone : true
-                        })
+                          Toast.fire({
+                            icon: 'error',
+                            title: 'The phone must be a number!!!'
+                          })
                     }
                     if(res.message[0] === "The emp id must be a number." || res.message[1] === "The emp id must be a number." || res.message[2] === "The emp id must be a number."){
-                        this.setState({
-                            alertId : true
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'The emp id must be a number!!!'
                         })
                     }
                     if(res.message[0] === "The email has already been taken." || res.message[1] === "The email has already been taken." || res.message[2] === "The email has already been taken."){
-                        this.setState({
-                            alertEmail : true
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'The email has already been taken!!!'
                         })
                     }
                  }
                  else{
-                    this.setState({
-                        alertCreate   : true,
-                    })
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-right',
+                        iconColor: 'black',
+                        customClass: {
+                          popup: 'colored-toast'
+                        },
+                        showConfirmButton: false,
+                        timer: 3500,
+                        timerProgressBar: true
+                      })
+                       Toast.fire({
+                        icon: 'success',
+                        title: 'Employee Added Successfuly'
+                      })
                  } 
                 this.getUsers()
             }
@@ -177,58 +203,92 @@ export class CrudTest extends React.Component {
             email         : this.state.email,
             location      : this.state.location,
             company       : this.state.company,
-            token         : this.token
+            // token         : this.token
         }
-        API.User.update(putData, this.state.id, this.token)
-        .then(response => {
-            let res = response.data;
-            if(res.status){
-                this.setState({
-                    isShowModal2 : false,
-                    validated    : false,
-                    isUpdate     : false,
-                    emp_id       : '',
-                    name         : '',
-                    phone        : '',
-                    email        : '',
-                    location     : '',
-                    company      : ''
-                })
-                // field Validation
-                if(res.status === "fail"){
-                    console.log(res.message)
-                    if(res.message[0] === "The phone must be a number." || res.message[1] === "The phone must be a number." || res.message[2] === "The phone must be a number."){
-                        this.setState({
-                            alertPhone : true
-                        })
-                    }
-                    if(res.message[0] === "The emp id must be a number." || res.message[1] === "The emp id must be a number." || res.message[2] === "The emp id must be a number."){
-                        this.setState({
-                            alertId : true
-                        })
-                    }
-                    if(res.message[0] === "The email has already been taken." || res.message[1] === "The email has already been taken." || res.message[2] === "The email has already been taken."){
-                        this.setState({
-                            alertEmail : true
-                        })
-                    }
-                 }
-                 else{
-                    this.setState({
-                        alertUpdate   : true,
-                    })
-                 } 
-                this.getUsers() 
-            }
-          
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-right',
+            iconColor: 'black',
+            customClass: {
+              popup: 'colored-toast'
+            },
+            showConfirmButton: false,
+            timer: 3500,
+            timerProgressBar: true
         })
-        .catch(function (error) {
-            if (error.response.status === 401) {
-                window.localStorage.setItem('token', null);
-                navigate('/login')
-             }
-        });
         
+        let userData = _.cloneDeep(this.state.users.find(x => x.id == this.state.id))
+        delete userData.created_at
+        delete userData.updated_at
+        if(_.isEqual(userData, putData)){
+            Toast.fire({
+                icon: 'error',
+                title: 'This user did not have any changes!!!!!!'
+            })
+        }
+        else{
+            API.User.update(putData, this.state.id, this.token)
+            .then(response => {
+                let res = response.data;
+                if(res.status){
+                    this.setState({
+                        isShowModal2 : false,
+                        validated    : false,
+                        isUpdate     : false,
+                        emp_id       : '',
+                        name         : '',
+                        phone        : '',
+                        email        : '',
+                        location     : '',
+                        company      : ''
+                    })
+                    // field Validation
+                    if(res.status === "fail"){
+                        console.log(res.message)
+                        if(res.message[0] === "The phone must be a number." || res.message[1] === "The phone must be a number." || res.message[2] === "The phone must be a number."){
+                            this.setState({
+                                alertPhone : true
+                            })
+                        }
+                        if(res.message[0] === "The emp id must be a number." || res.message[1] === "The emp id must be a number." || res.message[2] === "The emp id must be a number."){
+                            this.setState({
+                                alertId : true
+                            })
+                        }
+                        if(res.message[0] === "The email has already been taken." || res.message[1] === "The email has already been taken." || res.message[2] === "The email has already been taken."){
+                            this.setState({
+                                alertEmail : true
+                            })
+                        }
+                    }
+                    else{
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-right',
+                            iconColor: 'black',
+                            customClass: {
+                            popup: 'colored-toast'
+                            },
+                            showConfirmButton: false,
+                            timer: 3500,
+                            timerProgressBar: true
+                        })
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Employee Updated Successfuly'
+                        })
+                    } 
+                    this.getUsers() 
+                }
+            
+            })
+            .catch(function (error) {
+                if (error.response.status === 401) {
+                    window.localStorage.setItem('token', null);
+                    navigate('/login')
+                }
+            });
+        }   
     }
 
     userDelete(user){
@@ -296,6 +356,11 @@ export class CrudTest extends React.Component {
     handleLogout = () =>{
         const { navigate } = this.props;
         window.localStorage.setItem('token', null);
+        Swal.fire({
+            icon: 'success',
+            title: 'Logout Successfully',
+            type: 'success',
+        })
         navigate('/login')
     }
 
@@ -353,14 +418,16 @@ export class CrudTest extends React.Component {
                                     <Table responsive className='table align-middle mb-0 bg-white'>
                                             <thead className="bg-light">
                                                 <tr>
-                                                    <th>#</th>
-                                                    <th className='text-start'>Name</th>
-                                                    <th className='text-start'>Phone</th>
-                                                    <th className='text-start'>Email</th>
-                                                    <th className='text-start'>Location</th>
-                                                    <th className='text-start'>Company</th>
-                                                    <th className='text-start'>Created_At</th>
-                                                    <th className='text-start' colSpan={2}>Action</th>
+                                                    <th className='text-center'>Id</th>
+                                                    <th className='text-center'>Employee Id</th>
+                                                    <th className='text-center'>Name</th>
+                                                    <th className='text-center'>Phone</th>
+                                                    <th className='text-center'>Email</th>
+                                                    <th className='text-center'>Location</th>
+                                                    <th className='text-center'>Company</th>
+                                                    <th className='text-center'>Created_At</th>
+                                                    <th className='text-center'>Update_At</th>
+                                                    <th className='text-center' colSpan={2}>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -368,13 +435,15 @@ export class CrudTest extends React.Component {
                                                 <>
                                                 {this.state.users.map((user,index)=>(
                                                     <tr key={user.emp_id}>
-                                                     <td className="text-start">{user.emp_id}</td>
-                                                     <td className="text-start">{user.name}</td>
-                                                     <td className="text-start">{user.phone}</td>
-                                                     <td className="text-start">{user.email}</td>
-                                                     <td className="text-start">{user.location}</td>
-                                                     <td className="text-start">{user.company}</td>
-                                                     <td className="text-start">{user.created_at}</td>
+                                                    <td className="text-center">{user.id}</td>
+                                                     <td className="text-center">{user.emp_id}</td>
+                                                     <td className="text-center">{user.name}</td>
+                                                     <td className="text-center">{user.phone}</td>
+                                                     <td className="text-center">{user.email}</td>
+                                                     <td className="text-center">{user.location}</td>
+                                                     <td className="text-center">{user.company}</td>
+                                                     <td className="text-center">{user.created_at}</td>
+                                                     <td className="text-center">{user.updated_at}</td>
                                                      {this.state.isUpdate===false&&(
                                                         <>
                                                             <td><Button variant="outline-primary" onClick={()=>this.userUpdate(user,index)}>Edit</Button>{' '}</td>
@@ -383,7 +452,7 @@ export class CrudTest extends React.Component {
                                                      )}
                                                      {this.state.isUpdate===true&&(
                                                         <>
-                                                            <td><Button variant="primary" disabled>Edit</Button>{' '}</td>
+                                                            <td><Button variant="primary"disabled>Edit</Button>{' '}</td>
                                                             <td><Button variant="danger" disabled>Delete</Button>{' '}</td>
                                                         </>
                                                      )}

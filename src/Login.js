@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import gifBg from './login-bg.gif';
 import { useEffect, useState } from 'react';
 import API from "./api/API";
+import Swal from "sweetalert2";
 
 
 function Login(){
@@ -33,7 +34,13 @@ function Login(){
             if(response.status){
                 localStorage.setItem('token', response.token)
                 localStorage.setItem('username',username)
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Login Successfully',
+                    type: 'success',
+                })
                 navigate('/crudtest')
+
             }
             // else{
             //     //Validation
