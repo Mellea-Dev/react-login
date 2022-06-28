@@ -647,7 +647,7 @@ export class CrudTest extends React.Component {
                 {/* MODALS */}
                 <Modal show={this.state.isShowModal} onHide={() => this.handleChange('isShowModal', false)}>
                     <Modal.Header closeButton>
-                      <Modal.Title>Modal heading</Modal.Title>
+                      <Modal.Title>Add User</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Row>
