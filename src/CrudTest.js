@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faPenToSquare, faCheck} from '@fortawesome/free-solid-svg-icons'
 import ThemeProvider from 'react-bootstrap/ThemeProvider'
 import { Container, Row, Col, Card, Table, Button, Form, InputGroup, Modal, Alert, ModalTitle } from 'react-bootstrap';
-import React from 'react';
+import React, { useReducer } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from "./api/API";
 import _ from 'lodash';
@@ -231,6 +231,14 @@ export class CrudTest extends React.Component {
         
     }
 
+    userDelete(user){
+        this.setState({
+            alertDelete : true,
+            id          : user.id,
+            name        : user.name
+        })
+    }
+
     handleDelete = (id) =>{
         const { navigate } = this.props;
         API.User.delete(id, this.token)
@@ -239,7 +247,9 @@ export class CrudTest extends React.Component {
             let res = response.data;
             if(res.status){
                 this.getUsers()
-               alert('Data has been Deleted')
+               this.setState({
+                alertDelete : false
+               })
             }
             else{
                 //validation
@@ -368,7 +378,7 @@ export class CrudTest extends React.Component {
                                                      {this.state.isUpdate===false&&(
                                                         <>
                                                             <td><Button variant="outline-primary" onClick={()=>this.userUpdate(user,index)}>Edit</Button>{' '}</td>
-                                                            <td><Button variant="outline-danger" onClick={()=>this.handleDelete(user.id)}>Delete</Button>{' '}</td>
+                                                            <td><Button variant="outline-danger" onClick={()=>this.userDelete(user,index)}>Delete</Button>{' '}</td>
                                                         </>
                                                      )}
                                                      {this.state.isUpdate===true&&(
@@ -755,7 +765,20 @@ export class CrudTest extends React.Component {
                     </Button>
                     </Modal.Footer>
                 </Modal>
-                
+                <Modal show={this.state.alertDelete} onHide={() => this.handleChange('alertDelete', false)}>
+                    <Modal.Body>
+                        <img src={warningimg} alt="" className='img-fluid'/>
+                        <ModalTitle className="text-center text-danger">Are you sure you want to Delete Employee {this.state.name} with an ID of {this.state.id}</ModalTitle>
+                    </Modal.Body>
+                    <Modal.Footer>
+                    <Button className="btn-round btn-gradient-danger" onClick={() => this.handleChange('alertDelete', false)}>
+                        Close
+                    </Button>
+                    <Button className="btn-round btn-gradient-danger" onClick={()=>this.handleDelete(this.state.id)}>
+                        Delete
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
             </ThemeProvider>
         </div>
       );
