@@ -113,6 +113,19 @@ body {
   border: none;
   box-shadow: 2px 2px 4px #bebbbb;
 }
+.btn-gradient-grey{
+  background: linear-gradient(90deg, rgba(218,218,226,1) 0%, rgba(123,123,129,1) 100%);
+  color: black;
+  border: none;
+  box-shadow: 2px 2px 4px #bebbbb;
+}
+
+.btn-gradient-grey:hover{
+  background: linear-gradient(90deg, rgba(148,148,148,1) 0%, rgba(43,43,43,1) 100%);
+  color: white;
+  border: none;
+  box-shadow: 2px 2px 4px #bebbbb;
+}
 
 .alert-bg-gradient-danger{
   background: linear-gradient(90deg, rgba(255,190,190,1) 15%, rgba(249,255,149,1) 82%);
@@ -150,4 +163,18 @@ body {
 
 .colored-toast .swal2-html-container {
   color: black;
+}
+
+.btn-reset{
+  background-color: transparent;
+  border: none;
+}
+
+.btn-reset:hover{
+  background-color: transparent;
+  border: none;
+}
+
+.bg-gradient{
+  background: linear-gradient(90deg,  rgba(182,234,246,1) 15%,  rgba(235,238,174,1)82%);
 }
