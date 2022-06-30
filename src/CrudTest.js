@@ -101,88 +101,117 @@ export class CrudTest extends React.Component {
             company       : this.state.company,
             token         : this.token
         }
-        
-       API.User.create(postData,this.token) 
-        .then(response => {
-            let res = response.data
-            console.log(JSON.stringify(res))
-            console.log(response)
-            if (res.status) {
-                this.setState({
-                    isShowModal   : false,
-                    validated     : false,
-                    emp_id        : '',
-                    name          : '',
-                    phone         : '',
-                    email         : '',
-                    location      : '',
-                    company       : '',
-                    token         : '',
-                 })
-
-                 // field Validation
-                 if(res.status === "fail"){
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: 'top-right',
-                        iconColor: 'black',
-                        customClass: {
-                          popup: 'colored-toast'
-                        },
-                        showConfirmButton: false,
-                        timer: 3500,
-                        timerProgressBar: true
-                      })
-                    if(res.message[0] === "The phone must be a number." || res.message[1] === "The phone must be a number." || res.message[2] === "The phone must be a number."){
-                          Toast.fire({
-                            icon: 'error',
-                            title: 'The phone must be a number!!!'
-                          })
-                    }
-                    if(res.message[0] === "The emp id must be a number." || res.message[1] === "The emp id must be a number." || res.message[2] === "The emp id must be a number."){
-                        Toast.fire({
-                            icon: 'error',
-                            title: 'The emp id must be a number!!!'
-                        })
-                    }
-                    if(res.message[0] === "The email has already been taken." || res.message[1] === "The email has already been taken." || res.message[2] === "The email has already been taken."){
-                        Toast.fire({
-                            icon: 'error',
-                            title: 'The email has already been taken!!!'
-                        })
-                    }
-                 }
-                 else{
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: 'top-right',
-                        iconColor: 'black',
-                        customClass: {
-                          popup: 'colored-toast'
-                        },
-                        
-                        showConfirmButton: false,
-                        timer: 3500,
-                        timerProgressBar: true
-                      })
-                       Toast.fire({
-                        icon: 'success',
-                        title: 'Employee Added Successfuly'
-                      })
-                 } 
-                this.getUsers()
-            }
-    
-            
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-right',
+            iconColor: 'black',
+            customClass: {
+            popup: 'colored-toast'
+            },
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            },
+            showConfirmButton: false,
+            timer: 3500,
+            timerProgressBar: true
         })
-        .catch(function (error) {
-            if (error.response.status === 401) {
-                window.localStorage.setItem('token', null);
-                navigate('/login')
-             }
-        });
-
+        let data = _.cloneDeep(this.state.users.filter(x => x.id))
+        let userid = _.map(data, 'emp_id')
+        let useremail = _.map(data, 'email')
+        if(userid.includes(this.state.emp_id)){
+            Toast.fire({
+                icon: 'error',
+                title: 'Employee ID is already taken.'
+            })
+        }
+        if(useremail.includes(this.state.email)){
+            Toast.fire({
+                icon: 'error',
+                title: 'Email is already taken.'
+            })
+        }
+        if(!userid.includes(this.state.emp_id) && !useremail.includes(this.state.email)){
+            API.User.create(postData,this.token) 
+            .then(response => {
+                let res = response.data
+                console.log(JSON.stringify(res))
+                console.log(response)
+                if (res.status) {
+                    this.setState({
+                        isShowModal   : false,
+                        validated     : false,
+                        emp_id        : '',
+                        name          : '',
+                        phone         : '',
+                        email         : '',
+                        location      : '',
+                        company       : '',
+                        token         : '',
+                     })
+    
+                     // field Validation
+                     if(res.status === "fail"){
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-right',
+                            iconColor: 'black',
+                            customClass: {
+                              popup: 'colored-toast'
+                            },
+                            showConfirmButton: false,
+                            timer: 3500,
+                            timerProgressBar: true
+                          })
+                        if(res.message[0] === "The phone must be a number." || res.message[1] === "The phone must be a number." || res.message[2] === "The phone must be a number."){
+                              Toast.fire({
+                                icon: 'error',
+                                title: 'The phone must be a number!!!'
+                              })
+                        }
+                        if(res.message[0] === "The emp id must be a number." || res.message[1] === "The emp id must be a number." || res.message[2] === "The emp id must be a number."){
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'The emp id must be a number!!!'
+                            })
+                        }
+                        if(res.message[0] === "The email has already been taken." || res.message[1] === "The email has already been taken." || res.message[2] === "The email has already been taken."){
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'The email has already been taken!!!'
+                            })
+                        }
+                     }
+                     else{
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-right',
+                            iconColor: 'black',
+                            customClass: {
+                              popup: 'colored-toast'
+                            },
+                            
+                            showConfirmButton: false,
+                            timer: 3500,
+                            timerProgressBar: true
+                          })
+                           Toast.fire({
+                            icon: 'success',
+                            title: 'Employee Added Successfuly'
+                          })
+                     } 
+                    this.getUsers()
+                }
         
+                
+            })
+            .catch(function (error) {
+                if (error.response.status === 401) {
+                    window.localStorage.setItem('token', null);
+                    navigate('/login')
+                 }
+            });
+        }
     }
 
     //user update user states
