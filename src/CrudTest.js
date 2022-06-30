@@ -108,10 +108,6 @@ export class CrudTest extends React.Component {
             customClass: {
             popup: 'colored-toast'
             },
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-            },
             showConfirmButton: false,
             timer: 3500,
             timerProgressBar: true
