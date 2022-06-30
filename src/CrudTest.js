@@ -9,6 +9,10 @@ import _ from 'lodash';
 import warningimg from "./Warning.gif";
 import empty from "./Empty.gif";
 import Swal from "sweetalert2";
+import MaskedFormControl from 'react-bootstrap-maskedinput';
+import { IMaskInput } from "react-imask";
+
+
 
 export class CrudTest extends React.Component {
  
@@ -26,6 +30,7 @@ export class CrudTest extends React.Component {
         alertEmail    : false,
         validated     : false,
         alertCreate   : false,
+        alertDelete   : false,
         alertUpdate   : false,
         users         : [],
         id            : '',
@@ -37,7 +42,8 @@ export class CrudTest extends React.Component {
         company       : '',
       };
       this.token=localStorage.getItem('token')
-     
+      this.phoneMask = "6300000000000";
+      this.emp_idMask = "000000000"
     }
 
    
@@ -63,6 +69,8 @@ export class CrudTest extends React.Component {
    }
    //validateUpdateForm
    validateForm2 = (e) =>{
+    
+
     const form = e.currentTarget; 
     e.preventDefault();
     if (form.checkValidity() === false) {
@@ -93,6 +101,7 @@ export class CrudTest extends React.Component {
             company       : this.state.company,
             token         : this.token
         }
+        
        API.User.create(postData,this.token) 
         .then(response => {
             let res = response.data
@@ -119,10 +128,6 @@ export class CrudTest extends React.Component {
                         iconColor: 'black',
                         customClass: {
                           popup: 'colored-toast'
-                        },
-                        didOpen: (toast) => {
-                            toast.addEventListener('mouseenter', Swal.stopTimer)
-                            toast.addEventListener('mouseleave', Swal.resumeTimer)
                         },
                         showConfirmButton: false,
                         timer: 3500,
@@ -155,10 +160,7 @@ export class CrudTest extends React.Component {
                         customClass: {
                           popup: 'colored-toast'
                         },
-                        didOpen: (toast) => {
-                            toast.addEventListener('mouseenter', Swal.stopTimer)
-                            toast.addEventListener('mouseleave', Swal.resumeTimer)
-                        },
+                        
                         showConfirmButton: false,
                         timer: 3500,
                         timerProgressBar: true
@@ -170,8 +172,7 @@ export class CrudTest extends React.Component {
                  } 
                 this.getUsers()
             }
-            
-            
+    
             
         })
         .catch(function (error) {
@@ -183,7 +184,6 @@ export class CrudTest extends React.Component {
 
         
     }
-
 
     //user update user states
     userUpdate(user){
@@ -334,7 +334,10 @@ export class CrudTest extends React.Component {
                 },
                 showConfirmButton: false,
                 timer: 3500,
-                timerProgressBar: true
+                timerProgressBar: true,
+            })
+            this.setState({
+                alertDelete: false
             })
             Toast.fire({
                 icon: 'error',
@@ -411,6 +414,7 @@ export class CrudTest extends React.Component {
     componentDidMount() {
         // console.log('mounted')
         this.getUsers()
+        
     }
   
 
@@ -420,6 +424,8 @@ export class CrudTest extends React.Component {
         isShowLogout : true
        })
     }
+
+
     render() {
     
       return (
@@ -583,17 +589,15 @@ export class CrudTest extends React.Component {
                                                         <Form.Group as={Col} md="6" controlId="validationPhone">
                                                             <Form.Label className="float-start mb-0">Phone</Form.Label>
                                                             <InputGroup hasValidation>
-                                                                <Form.Control
-                                                                className="input-round"
-                                                                type="text"
-                                                                placeholder="Phone"
-                                                                aria-describedby="inputGroupPrepend"
-                                                                required
-                                                                onChange={(e)=>this.handleChange('phone',e.target.value)} value={this.state.phone}
+                                                                <IMaskInput
+                                                                    required
+                                                                    className="form-control input-round"
+                                                                    mask={this.phoneMask}
+                                                                    value={this.state.phone}
+                                                                    onChange={(e)=>this.handleChange('phone',e.target.value)}
+                                                                    placeholder="Phone"
                                                                 />
-                                                                <Form.Control.Feedback type="invalid">
-                                                                Please choose a username.
-                                                                </Form.Control.Feedback>
+                                                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                             </InputGroup>
                                                         </Form.Group>
 
@@ -630,12 +634,13 @@ export class CrudTest extends React.Component {
                                                           
                                                         <Form.Group as={Col} md="6" controlId="validationEmail7">
                                                             <Form.Label className="float-start mb-0 mt-1">Employee ID</Form.Label>
-                                                            <Form.Control
-                                                                className="input-round"
+                                                            <IMaskInput
                                                                 required
-                                                                type="text"
-                                                                placeholder="ID"
-                                                                onChange={(e)=>this.handleChange('emp_id',e.target.value)} value={this.state.emp_id}
+                                                                className="form-control input-round"
+                                                                mask={this.emp_idMask}
+                                                                value={this.state.emp_id}
+                                                                onChange={(e)=>this.handleChange('emp_id',e.target.value)}
+                                                                placeholder="Employee Id"
                                                             />
                                                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                             <Form.Control.Feedback type="invalid">
@@ -716,16 +721,16 @@ export class CrudTest extends React.Component {
                                                         <Form.Group as={Col} md="6" controlId="validationPhone">
                                                             <Form.Label className="float-start mb-0">Phone</Form.Label>
                                                             <InputGroup hasValidation>
-                                                                <Form.Control
-                                                                className="input-round"
-                                                                type="text"
-                                                                placeholder="Phone"
-                                                                aria-describedby="inputGroupPrepend"
-                                                                required
-                                                                onChange={(e)=>this.handleChange('phone',e.target.value)} value={this.state.phone}
+                                                                <IMaskInput
+                                                                    required
+                                                                    className="form-control input-round"
+                                                                    mask={this.phoneMask}
+                                                                    value={this.state.phone}
+                                                                    onChange={(e)=>this.handleChange('phone',e.target.value)}
+                                                                    placeholder="Phone"
                                                                 />
                                                                 <Form.Control.Feedback type="invalid">
-                                                                Please choose a username.
+                                                                Please enter your phone number.
                                                                 </Form.Control.Feedback>
                                                             </InputGroup>
                                                         </Form.Group>
@@ -763,12 +768,13 @@ export class CrudTest extends React.Component {
                                                           
                                                         <Form.Group as={Col} md="6" controlId="validationEmail7">
                                                             <Form.Label className="float-start mb-0 mt-1">Employee ID</Form.Label>
-                                                            <Form.Control
-                                                                className="input-round"
+                                                            <IMaskInput
                                                                 required
-                                                                type="text"
-                                                                placeholder="ID"
-                                                                onChange={(e)=>this.handleChange('emp_id',e.target.value)} value={this.state.emp_id}
+                                                                className="form-control input-round"
+                                                                mask={this.emp_idMask}
+                                                                value={this.state.emp_id}
+                                                                onChange={(e)=>this.handleChange('emp_id',e.target.value)}
+                                                                placeholder="Employee Id"
                                                             />
                                                             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
                                                             <Form.Control.Feedback type="invalid">
